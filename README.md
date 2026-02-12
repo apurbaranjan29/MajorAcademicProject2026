@@ -148,5 +148,5 @@ It is intended for **academic and research purposes only**.
 ---
 
 ## Authors
-B.Tech Major Project  
-Blockchain-Enabled Smart Healthcare System
+Apurba Ranjan Dhal
+
