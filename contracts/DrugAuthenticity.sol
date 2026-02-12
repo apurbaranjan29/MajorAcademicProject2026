@@ -81,7 +81,7 @@ contract DrugAuthenticity{
 
     //Trnasfer Drug 
     // In pharma supply chains, a batch moves like this:
-    // Manufacturer → Distributor → Wholesaler → Pharmacy → Hospital
+    // Manufacturer -> Distributor -> Wholesaler -> Pharmacy -> Hospital
     // At each step:
     // Only one party holds the batch
     // Responsibility shifts
