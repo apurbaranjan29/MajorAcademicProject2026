@@ -1,0 +1,78 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "prescriptionId",
+						"type": "uint256"
+					}
+				],
+				"name": "dispensePrescription",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "prescriptionId",
+						"type": "uint256"
+					}
+				],
+				"name": "isValidPrescription",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/DrugAuthenticity.sol": "IPrescriptionAndDiagnosis"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/DrugAuthenticity.sol": {
+			"keccak256": "0xfa0bd6f6c10845e7ea19a33ee5f60696692a3765605befbb1d6a088de3c10fc9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1659e66492d80b70062483051e13b10e33ddf04e8c12e9226460a28ec2a3f8a4",
+				"dweb:/ipfs/QmUBFA9nov1wLgtdC7rbi7H741LEfEwn2ZrfKxCuySQwEv"
+			]
+		}
+	},
+	"version": 1
+}

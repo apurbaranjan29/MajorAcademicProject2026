@@ -1,0 +1,511 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_accessControl",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_prescriptionContract",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "reporter",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "reason",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "CounterfeitFlagged",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "pharmacy",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "DrugReceivedAtPharmacy",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "drugName",
+						"type": "string"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "manufacturer",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "DrugRegistered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "pharmacy",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "prescriptionId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "DrugSold",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "from",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "DrugTransferredToDistributor",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "accessControl",
+				"outputs": [
+					{
+						"internalType": "contract IAccessControl",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					},
+					{
+						"internalType": "enum DrugAuthenticity.DrugStatus",
+						"name": "previousStatus",
+						"type": "uint8"
+					}
+				],
+				"name": "clearFlag",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "drugBatches",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "drugName",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "manufacturer",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "currentOwner",
+						"type": "address"
+					},
+					{
+						"internalType": "enum DrugAuthenticity.DrugStatus",
+						"name": "status",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bool",
+						"name": "isFlagged",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint256",
+						"name": "registeredAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "updatedAt",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "reason",
+						"type": "string"
+					}
+				],
+				"name": "flagCounterfeit",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					}
+				],
+				"name": "getStageHistory",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "enum DrugAuthenticity.DrugStatus",
+								"name": "stage",
+								"type": "uint8"
+							},
+							{
+								"internalType": "address",
+								"name": "actor",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "timestamp",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "note",
+								"type": "string"
+							}
+						],
+						"internalType": "struct DrugAuthenticity.StageEntry[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "prescriptionId",
+						"type": "uint256"
+					}
+				],
+				"name": "markAsSold",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "prescriptionContract",
+				"outputs": [
+					{
+						"internalType": "contract IPrescriptionAndDiagnosis",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					}
+				],
+				"name": "receiveAtPharmacy",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "drugName",
+						"type": "string"
+					}
+				],
+				"name": "registerDrug",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "distributor",
+						"type": "address"
+					}
+				],
+				"name": "transferToDistributor",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "batchId",
+						"type": "string"
+					}
+				],
+				"name": "verifyDrug",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "drugName",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "manufacturer",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "currentOwner",
+						"type": "address"
+					},
+					{
+						"internalType": "enum DrugAuthenticity.DrugStatus",
+						"name": "status",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bool",
+						"name": "isFlagged",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint256",
+						"name": "updatedAt",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"markAsSold(string,uint256)": {
+					"params": {
+						"batchId": "The drug batch being sold",
+						"prescriptionId": "ID of the patient's prescription from PrescriptionAndDiagnosis"
+					}
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"clearFlag(string,uint8)": {
+					"notice": "Regulator clears a false-positive counterfeit flag."
+				},
+				"flagCounterfeit(string,string)": {
+					"notice": "Flag a batch as potentially counterfeit.         Any registered user can flag — regulators investigate."
+				},
+				"getStageHistory(string)": {
+					"notice": "Returns the full stage history for a batch.         Powers the supply chain timeline UI on the website."
+				},
+				"markAsSold(string,uint256)": {
+					"notice": "Sell the drug to a patient.         Requires a valid, unexpired prescription.         Calls PrescriptionAndDiagnosis.dispensePrescription() to close the loop."
+				},
+				"receiveAtPharmacy(string)": {
+					"notice": "Pharmacy confirms receipt of the batch.         Only callable by wallets with PHARMACIST_ROLE.         Batch must be InTransit and pharmacy must be the current owner."
+				},
+				"registerDrug(string,string)": {
+					"notice": "Register a new drug batch on-chain.         Only callable by wallets with MANUFACTURER_ROLE."
+				},
+				"transferToDistributor(string,address)": {
+					"notice": "Transfer batch to a distributor.         Only the current owner (manufacturer) can call this.         Recipient must hold DISTRIBUTOR_ROLE."
+				},
+				"verifyDrug(string)": {
+					"notice": "Public drug verification — anyone can call this.         Used by the QR code scanner on the website."
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/DrugAuthenticity.sol": "DrugAuthenticity"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/DrugAuthenticity.sol": {
+			"keccak256": "0xfa0bd6f6c10845e7ea19a33ee5f60696692a3765605befbb1d6a088de3c10fc9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1659e66492d80b70062483051e13b10e33ddf04e8c12e9226460a28ec2a3f8a4",
+				"dweb:/ipfs/QmUBFA9nov1wLgtdC7rbi7H741LEfEwn2ZrfKxCuySQwEv"
+			]
+		}
+	},
+	"version": 1
+}

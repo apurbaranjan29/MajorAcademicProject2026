@@ -1,0 +1,772 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_accessControl",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "alertId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "alertType",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "value",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "threshold",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "severity",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "AlertTriggered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "device",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "DeviceDeregistered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "device",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "DeviceRegistered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "logId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "device",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "ipfsHash",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "VitalsLogged",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "BP_DIA_HIGH",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "BP_SYS_HIGH",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "GLUCOSE_HIGH",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "GLUCOSE_LOW",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "HR_HIGH",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "HR_LOW",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "SPO2_LOW",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "accessControl",
+				"outputs": [
+					{
+						"internalType": "contract IAccessControl",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "alertCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "alertRecords",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "alertId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "alertType",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "value",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "threshold",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "severity",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "mgdl",
+						"type": "uint256"
+					}
+				],
+				"name": "checkGlucose",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "exceeded",
+						"type": "bool"
+					},
+					{
+						"internalType": "string",
+						"name": "alertType",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "severity",
+						"type": "string"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "bpm",
+						"type": "uint256"
+					}
+				],
+				"name": "checkHeartRate",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "exceeded",
+						"type": "bool"
+					},
+					{
+						"internalType": "string",
+						"name": "alertType",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "severity",
+						"type": "string"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "pct",
+						"type": "uint256"
+					}
+				],
+				"name": "checkSpO2",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "exceeded",
+						"type": "bool"
+					},
+					{
+						"internalType": "string",
+						"name": "alertType",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "severity",
+						"type": "string"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "device",
+						"type": "address"
+					}
+				],
+				"name": "deregisterDevice",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "devicePatient",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					}
+				],
+				"name": "getAlertsByPatient",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					}
+				],
+				"name": "getLatestLog",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "logId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "device",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "patient",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "ipfsHash",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "timestamp",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct IoTDataLogger.VitalsLog",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					}
+				],
+				"name": "getLogsByPatient",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getThresholds",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "hrHigh",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "hrLow",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "spo2Low",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "bpSysHigh",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "glucoseHigh",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "glucoseLow",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "isRegisteredDevice",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "logCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "ipfsHash",
+						"type": "string"
+					}
+				],
+				"name": "logVitalsBatch",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "device",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					}
+				],
+				"name": "registerDevice",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "alertType",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "value",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "threshold",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "severity",
+						"type": "string"
+					}
+				],
+				"name": "triggerAlert",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "vitalsLogs",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "logId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "device",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "ipfsHash",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"logVitalsBatch(string)": {
+					"params": {
+						"ipfsHash": "IPFS CID of the encrypted vitals JSON batch"
+					}
+				},
+				"triggerAlert(address,string,uint256,uint256,string)": {
+					"params": {
+						"alertType": "String label: \"HR_HIGH\", \"HR_LOW\", \"SPO2_LOW\", etc.",
+						"patient": "Patient being monitored",
+						"severity": "\"WARNING\" or \"CRITICAL\"",
+						"threshold": "The threshold constant that was crossed",
+						"value": "The actual sensor reading that triggered the alert"
+					}
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"checkHeartRate(uint256)": {
+					"notice": "Returns whether a heart rate reading crosses any threshold.         The backend can call this as a view before deciding to triggerAlert."
+				},
+				"deregisterDevice(address)": {
+					"notice": "Remove a device from the whitelist (lost / replaced / retired)"
+				},
+				"getAlertsByPatient(address)": {
+					"notice": "Returns all alert IDs for a patient"
+				},
+				"getLatestLog(address)": {
+					"notice": "Returns the latest log for a patient (most recent vitals)"
+				},
+				"getLogsByPatient(address)": {
+					"notice": "Returns all vitals log IDs for a patient"
+				},
+				"getThresholds()": {
+					"notice": "Returns threshold constants as a struct for frontend display"
+				},
+				"logVitalsBatch(string)": {
+					"notice": "Log a batch of vitals readings anchored by their IPFS hash.         Called by the Node.js IoT ingestion service after encrypting         and uploading the readings to IPFS."
+				},
+				"registerDevice(address,address)": {
+					"notice": "Register a new IoT device and associate it with a patient.         The device address is the wallet used by the backend IoT bridge."
+				},
+				"triggerAlert(address,string,uint256,uint256,string)": {
+					"notice": "Trigger a threshold alert.         Called by the Node.js backend when it detects a threshold         crossing in the raw sensor data BEFORE uploading to IPFS.         The alert is stored on-chain for an immutable audit record."
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/IoTdatalogger.sol": "IoTDataLogger"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/IoTdatalogger.sol": {
+			"keccak256": "0x4d9e6c8f1274caa252ca8b129644bc3397bbdbe07d11154709207048356a4dec",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://171a903e00fdc2a1203d409a4ace58da6ad3fc57a16cddacd7324316db9ac31f",
+				"dweb:/ipfs/QmW8BKbPJNCNN1eft8rJ1Yjt57DSsPqG54XL6HRgjcfgHo"
+			]
+		}
+	},
+	"version": 1
+}

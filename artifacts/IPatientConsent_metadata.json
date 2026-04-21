@@ -1,0 +1,91 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "delegate",
+						"type": "address"
+					}
+				],
+				"name": "hasValidConsent",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					}
+				],
+				"name": "isRegisteredPatient",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"title": "InsuranceClaims",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"notice": "Automates insurance claim lifecycle: Submitted → Approved → Paid         or Submitted → Rejected.  Includes ETH-based demo payout. CHANGES FROM v1:  - CRITICAL FIX: payClaim() now uses Checks-Effects-Interactions (CEI)    pattern + nonReentrant guard — the classic reentrancy bug is closed  - Claim cooldown: one claim per patient per 30 days (fraud prevention)  - Duplicate / suspicious claim detection with ClaimFraudFlagged event  - Interface updated to hasValidConsent()  - diagnosisHash added to claim struct — links claim to diagnosis  - payClaim() implemented (was missing in v1 — ClaimPaid event existed    but no function to trigger it)  - receive() payable added so the contract can accept ETH from the insurer    for demo funding  - withdraw() for insurer to recover unused demo ETH",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/InsuranceClaims.sol": "IPatientConsent"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/InsuranceClaims.sol": {
+			"keccak256": "0x5d646033848e2d0e453afe4a5e6799485817a027cb7672a965c397576fddc857",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0c9f706c07c3850bc9b21ba2831284ac365dfd7a3778002dd25603c1d04117ed",
+				"dweb:/ipfs/QmRkJKyQV8JxfRUNyzvRmELgh7A7TESJKtGsWDxf9tMJDQ"
+			]
+		}
+	},
+	"version": 1
+}
