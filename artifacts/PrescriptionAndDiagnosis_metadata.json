@@ -1,0 +1,589 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_identityContract",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_accessControl",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "diagnosisId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "doctor",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "DiagnosisAdded",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "prescriptionId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "doctor",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "expiresAt",
+						"type": "uint256"
+					}
+				],
+				"name": "PrescriptionAdded",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "prescriptionId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "pharmacist",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "dispensedAt",
+						"type": "uint256"
+					}
+				],
+				"name": "PrescriptionDispensed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "prescriptionId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "expiredAt",
+						"type": "uint256"
+					}
+				],
+				"name": "PrescriptionExpired",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "DEFAULT_PRESCRIPTION_VALIDITY",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "accessControl",
+				"outputs": [
+					{
+						"internalType": "contract IAccessControl",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "diagnosisDetails",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "ipfsHash",
+						"type": "string"
+					}
+				],
+				"name": "addDiagnosis",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "medicationDetails",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "ipfsHash",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "validityDays",
+						"type": "uint256"
+					}
+				],
+				"name": "addPrescription",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "diagnoses",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "diagnosisId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "doctor",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "diagnosisDetails",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "ipfsHash",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "diagnosisCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "prescriptionId",
+						"type": "uint256"
+					}
+				],
+				"name": "dispensePrescription",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "prescriptionId",
+						"type": "uint256"
+					}
+				],
+				"name": "expirePrescription",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					}
+				],
+				"name": "getDiagnosesByPatient",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "prescriptionId",
+						"type": "uint256"
+					}
+				],
+				"name": "getPrescription",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "prescriptionId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "patient",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "doctor",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "medicationDetails",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "ipfsHash",
+								"type": "string"
+							},
+							{
+								"internalType": "enum PrescriptionAndDiagnosis.PrescriptionStatus",
+								"name": "status",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256",
+								"name": "issuedAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "expiresAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "dispensedBy",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "dispensedAt",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct PrescriptionAndDiagnosis.Prescription",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					}
+				],
+				"name": "getPrescriptionsByPatient",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "identityContract",
+				"outputs": [
+					{
+						"internalType": "contract IPatientConsent",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "prescriptionId",
+						"type": "uint256"
+					}
+				],
+				"name": "isValidPrescription",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "prescriptionCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "prescriptions",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "prescriptionId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "doctor",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "medicationDetails",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "ipfsHash",
+						"type": "string"
+					},
+					{
+						"internalType": "enum PrescriptionAndDiagnosis.PrescriptionStatus",
+						"name": "status",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "issuedAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "expiresAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "dispensedBy",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "dispensedAt",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"addPrescription(address,string,string,uint256)": {
+					"params": {
+						"validityDays": "0 = use default 180 days"
+					}
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"addDiagnosis(address,string,string)": {
+					"notice": "Add a diagnosis for a patient.         Caller must be a consented doctor."
+				},
+				"addPrescription(address,string,string,uint256)": {
+					"notice": "Add a prescription for a patient."
+				},
+				"dispensePrescription(uint256)": {
+					"notice": "Mark a prescription as dispensed.         Only callable by a registered pharmacist.         Validates the prescription is still ISSUED and not expired.         DrugAuthenticity.sol calls isValidPrescription() before this."
+				},
+				"expirePrescription(uint256)": {
+					"notice": "Mark a prescription as EXPIRED.         Anyone can call this on an overdue prescription (used by bots / cron)."
+				},
+				"getDiagnosesByPatient(address)": {
+					"notice": "Returns all diagnosis IDs for a patient"
+				},
+				"getPrescription(uint256)": {
+					"notice": "Returns full prescription struct — called by DrugAuthenticity         to get the patient address for validation."
+				},
+				"getPrescriptionsByPatient(address)": {
+					"notice": "Returns all prescription IDs for a patient"
+				},
+				"isValidPrescription(uint256)": {
+					"notice": "Primary cross-contract check used by DrugAuthenticity.         Returns true only if prescription is ISSUED and not expired."
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/PrescriptionAndDiagnosis.sol": "PrescriptionAndDiagnosis"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/PrescriptionAndDiagnosis.sol": {
+			"keccak256": "0x976a830c2e2b2b9f1823fc171f17f3cb566079eb0d8dfb19624f8958b6ecf0d4",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8b993a3503186d9adad4c3269e99b54d8b97b8043748b6bf54df465c4ca83149",
+				"dweb:/ipfs/QmQch5AU37kKD33tamrMvJpHXkcjDnnAb74TXoYg1WAPK9"
+			]
+		}
+	},
+	"version": 1
+}

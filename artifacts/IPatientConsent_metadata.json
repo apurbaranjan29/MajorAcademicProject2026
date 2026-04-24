@@ -1,0 +1,91 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "delegate",
+						"type": "address"
+					}
+				],
+				"name": "hasValidConsent",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					}
+				],
+				"name": "isRegisteredPatient",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"title": "MedicalRecordsAndAccess",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"notice": "Stores encrypted medical record IPFS hashes on-chain and enforces         patient-controlled, time-limited consent before allowing access. CHANGES FROM v1:  - Interface updated to use hasValidConsent() — now checks expiry too  - Record versioning: each patient has a version counter; updates append    a new record rather than overwrite (immutable audit trail)  - RecordAccessed event now includes the accessor's role string  - getRecordsByPatient() added for frontend pagination  - nonReentrant guard on all write functions  - viewMedicalRecord split: returns hash + emits access log",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/MedicalRecordsAndAccess.sol": "IPatientConsent"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/MedicalRecordsAndAccess.sol": {
+			"keccak256": "0x2b1320b817a629f0fee90faa6e829ed6d7d5dcf4c0fac7d7d15f0efe1aeeaba1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://2bca50b96a331971661f15ac51495520cc9d43c04a65dcf0b8af2fdab1a26339",
+				"dweb:/ipfs/QmRC6gnJehtue1UqakZwx6pMWCmM5rpxnNw395iTteSQaP"
+			]
+		}
+	},
+	"version": 1
+}
