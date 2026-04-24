@@ -1,0 +1,204 @@
+/* ─── Apple Typography & Tailwind ─────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Apple Design System Variables ──────────────────────── */
+:root {
+    /* Core Binary Palette */
+    --background: #000000;
+    /* Absolute Black (Showcase) */
+    --secondary-bg: #f5f5f7;
+    /* Pale Apple Gray (Transaction) */
+
+    /* Surface Layers */
+    --card: #1d1d1f;
+    /* Near-Black Ink (Cards on Black) */
+    --card-light: #ffffff;
+    /* Pure White (Cards on Gray) */
+    --elevated: #272729;
+    /* Slightly lighter dark surface */
+
+    /* Text Strategy */
+    --text-primary: #f5f5f7;
+    /* Light text for dark scenes */
+    --text-dark: #1d1d1f;
+    /* Dark text for light scenes */
+    --text-secondary: #86868b;
+    /* Muted Metadata (Apple Standard) */
+
+    /* Semantic Accents */
+    --primary: #0071e3;
+    /* Apple Action Blue */
+    --primary-hover: #0066cc;
+    --success: #00ff41;
+    /* Matrix/Forensic Green */
+    --error: #ff3b30;
+    /* Apple System Red */
+    --border: #424245;
+    /* Subtle dark divider */
+    --border-light: #d2d2d7;
+    /* Soft retail divider */
+
+    /* Geometry */
+    --radius-sm: 8px;
+    /* Buttons/Inputs */
+    --radius-md: 18px;
+    /* Standard Apple Cards */
+    --radius-lg: 980px;
+    /* Signature Pill/Capsule */
+}
+
+/* ─── Base Styles ───────────────────────────────────────── */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--background);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.022em;
+    /* Apple-style tight tracking */
+    overflow-x: hidden;
+}
+
+.dashboard-bg {
+    background-color: var(--background);
+    background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    /* This mask makes it fade out toward the bottom so it looks deep */
+    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}
+
+/* ─── Typography Gear ────────────────────────────────────── */
+.heading-display {
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.07;
+}
+
+.font-mono {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: -0.05em;
+}
+
+/* ─── Apple Component Classes ───────────────────────────── */
+
+/* The Showcase Pill Button */
+.btn-pill {
+    @apply transition-all duration-300 ease-out active:scale-95;
+    border-radius: var(--radius-lg);
+    font-weight: 500;
+    padding: 10px 22px;
+}
+
+/* The Apple Card (Showcase Mode) */
+.apple-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    @apply transition-all duration-500 hover:border-gray-500;
+}
+
+/* The Apple Card (Transaction Mode) */
+.apple-card-light {
+    background: var(--card-light);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+/* When the .light-theme class is active on the <body> */
+body.light-theme {
+    --background: #f5f5f7;
+    /* Swaps Black for Apple Gray */
+    --card: #ffffff;
+    /* Swaps Near-Black for Pure White */
+    --text-primary: #1d1d1f;
+    /* Swaps Light Text for Dark Text */
+    --border: #d2d2d7;
+    /* Swaps Dark Border for Light Border */
+    --secondary-bg: #ffffff;
+}
+
+/* Ensure the background image blends well in both modes */
+.theme-transition {
+    transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+        color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Status & Forensic Indicators ───────────────────────── */
+
+/* Status Dots */
+.dot {
+    @apply w-2 h-2 rounded-full;
+}
+
+.dot-success {
+    background: var(--success);
+    box-shadow: 0 0 10px var(--success);
+}
+
+.dot-error {
+    background: var(--error);
+}
+
+/* Matrix Pulse for Blockchain fetch */
+@keyframes pulse-success {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(1.1);
+        box-shadow: 0 0 15px var(--success);
+    }
+}
+
+.pulse-success {
+    animation: pulse-success 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ─── Modern Scrollbar ───────────────────────────────────── */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* ─── Page Transitions ──────────────────────────────────── */
+.page-transition {
+    animation: apple-in 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes apple-in {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
