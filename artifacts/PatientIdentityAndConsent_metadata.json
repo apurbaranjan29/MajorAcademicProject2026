@@ -9,6 +9,136 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "_registryAdmin",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "delegate",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "expiresAt",
+						"type": "uint256"
+					}
+				],
+				"name": "ConsentGranted",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "delegate",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "revokedAt",
+						"type": "uint256"
+					}
+				],
+				"name": "ConsentRevoked",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "newMetadataHash",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "MetadataUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "registeredBy",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "metadataHash",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "PatientRegistered",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "DEFAULT_CONSENT_DURATION",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
 						"name": "patient",
 						"type": "address"
 					},
@@ -18,7 +148,59 @@
 						"type": "address"
 					}
 				],
-				"name": "consents",
+				"name": "getConsentDetails",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "granted",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint256",
+						"name": "expiresAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExpired",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "delegate",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "durationDays",
+						"type": "uint256"
+					}
+				],
+				"name": "grantConsent",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patient",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "delegate",
+						"type": "address"
+					}
+				],
+				"name": "hasValidConsent",
 				"outputs": [
 					{
 						"internalType": "bool",
@@ -33,7 +215,7 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "patient",
+						"name": "",
 						"type": "address"
 					}
 				],
@@ -47,22 +229,165 @@
 				],
 				"stateMutability": "view",
 				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "patientMetadata",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "patientAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "metadataHash",
+						"type": "string"
+					}
+				],
+				"name": "registerPatient",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "registeredPatientsList",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "registryAdmin",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "delegate",
+						"type": "address"
+					}
+				],
+				"name": "revokeConsent",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "newMetadataHash",
+						"type": "string"
+					}
+				],
+				"name": "updateMetadata",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
 			}
 		],
 		"devdoc": {
 			"kind": "dev",
-			"methods": {},
+			"methods": {
+				"grantConsent(address,uint256)": {
+					"params": {
+						"delegate": "Address to receive consent",
+						"durationDays": "How many days the consent is valid (0 = default)"
+					}
+				},
+				"hasValidConsent(address,address)": {
+					"params": {
+						"delegate": "Address requesting access (doctor, insurer, etc.)",
+						"patient": "Patient's address"
+					}
+				},
+				"registerPatient(address,string)": {
+					"params": {
+						"metadataHash": "IPFS CID of encrypted patient profile JSON",
+						"patientAddress": "Wallet address of the patient"
+					}
+				},
+				"revokeConsent(address)": {
+					"params": {
+						"delegate": "Address whose consent is revoked"
+					}
+				},
+				"updateMetadata(string)": {
+					"params": {
+						"newMetadataHash": "New IPFS CID"
+					}
+				}
+			},
 			"version": 1
 		},
 		"userdoc": {
 			"kind": "user",
-			"methods": {},
+			"methods": {
+				"getConsentDetails(address,address)": {
+					"notice": "Returns the full consent details for a patient-delegate pair.         Used by the frontend to show expiry date in the dashboard."
+				},
+				"grantConsent(address,uint256)": {
+					"notice": "Grant consent to a delegate (doctor / hospital / insurer) with         a custom duration in days.  Pass 0 to use the default 365 days."
+				},
+				"hasValidConsent(address,address)": {
+					"notice": "Primary cross-contract consent check.         Returns true only if consent is granted AND not expired."
+				},
+				"registerPatient(address,string)": {
+					"notice": "Register a new patient.  Only the registry admin calls this         (e.g., hospital onboarding desk)."
+				},
+				"revokeConsent(address)": {
+					"notice": "Revoke consent from a delegate immediately."
+				},
+				"updateMetadata(string)": {
+					"notice": "Patient updates their own metadata IPFS hash."
+				}
+			},
 			"version": 1
 		}
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/InsuranceClaims.sol": "PatientIdentityAndConsent"
+			"contracts/PatientIdentityAndConsent.sol": "PatientIdentityAndConsent"
 		},
 		"evmVersion": "osaka",
 		"libraries": {},
@@ -76,12 +401,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"contracts/InsuranceClaims.sol": {
-			"keccak256": "0x304b38cc91e65126abd9cd47b76781b81c78e922222f8e18976726e6cd07e180",
+		"contracts/PatientIdentityAndConsent.sol": {
+			"keccak256": "0x6abc4868f2c99ea9026b6fe696c9ef991e8aa70731e802c9f4b91271846ec643",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://da700b688e992c2eed93f99b73a528b2c3b5e182fe48134e21112ddc973fc982",
-				"dweb:/ipfs/QmaChvfe1BpYZqaNkHQFsVEBRD1MDnYZcXJJQNAr91e3x7"
+				"bzz-raw://bcdd32fad4f380f1a497a44ea684cd02f48b54671096e418044a51e87c123d66",
+				"dweb:/ipfs/QmWRgpPBFSfAvrm8CQUcK13wPkybKFgJyYHtPHzLrxeert"
 			]
 		}
 	},

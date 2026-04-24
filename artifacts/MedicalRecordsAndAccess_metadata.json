@@ -103,6 +103,37 @@
 				"type": "event"
 			},
 			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "recordId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "oldHash",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "newHash",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "RecordUpdated",
+				"type": "event"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -280,6 +311,24 @@
 				"inputs": [
 					{
 						"internalType": "uint256",
+						"name": "_recordId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_newIpfsHash",
+						"type": "string"
+					}
+				],
+				"name": "updateMedicalRecord",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
 						"name": "recordId",
 						"type": "uint256"
 					},
@@ -343,6 +392,9 @@
 				"getRecordsByPatient(address)": {
 					"notice": "Returns all record IDs belonging to a patient.         Frontend uses this to paginate a patient's record history."
 				},
+				"updateMedicalRecord(uint256,string)": {
+					"notice": "Allows the original doctor to correct a faulty record. The old hash is permanently logged in the event history for auditing."
+				},
 				"viewMedicalRecord(uint256,string)": {
 					"notice": "View a specific medical record and emit an access log.         Requires valid patient consent."
 				}
@@ -367,11 +419,11 @@
 	},
 	"sources": {
 		"contracts/MedicalRecordsAndAccess.sol": {
-			"keccak256": "0xec14bcee8f3cf0db401cc724126e7113c193c2b7bba67bdd726e7026106d3f11",
+			"keccak256": "0x2b1320b817a629f0fee90faa6e829ed6d7d5dcf4c0fac7d7d15f0efe1aeeaba1",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://54e18af4070cc023891a34fb5db46c61fe7298e8a85e2df805faa60aba26e955",
-				"dweb:/ipfs/QmbGzpGuDcaBPdGjDTsp3XXogAh4Amfhb56mzyFnfhsrZG"
+				"bzz-raw://2bca50b96a331971661f15ac51495520cc9d43c04a65dcf0b8af2fdab1a26339",
+				"dweb:/ipfs/QmRC6gnJehtue1UqakZwx6pMWCmM5rpxnNw395iTteSQaP"
 			]
 		}
 	},

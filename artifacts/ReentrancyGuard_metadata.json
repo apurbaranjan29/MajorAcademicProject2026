@@ -18,7 +18,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/InsuranceClaims.sol": "ReentrancyGuard"
+			"contracts/DrugAuthenticity.sol": "ReentrancyGuard"
 		},
 		"evmVersion": "osaka",
 		"libraries": {},
@@ -32,12 +32,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"contracts/InsuranceClaims.sol": {
-			"keccak256": "0x5d646033848e2d0e453afe4a5e6799485817a027cb7672a965c397576fddc857",
+		"contracts/DrugAuthenticity.sol": {
+			"keccak256": "0xfa0bd6f6c10845e7ea19a33ee5f60696692a3765605befbb1d6a088de3c10fc9",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://0c9f706c07c3850bc9b21ba2831284ac365dfd7a3778002dd25603c1d04117ed",
-				"dweb:/ipfs/QmRkJKyQV8JxfRUNyzvRmELgh7A7TESJKtGsWDxf9tMJDQ"
+				"bzz-raw://1659e66492d80b70062483051e13b10e33ddf04e8c12e9226460a28ec2a3f8a4",
+				"dweb:/ipfs/QmUBFA9nov1wLgtdC7rbi7H741LEfEwn2ZrfKxCuySQwEv"
 			]
 		}
 	},

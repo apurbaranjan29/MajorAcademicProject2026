@@ -85,6 +85,7 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
         string  accessorRole,   // "DOCTOR" | "INSURER" | "RESEARCHER" etc.
         uint256 timestamp
     );
+    event RecordUpdated(uint256 indexed recordId, string oldHash, string newHash, uint256 timestamp);
 
     // ─────────────────────────────────────────────────────────────
     // Modifiers
@@ -153,7 +154,17 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
             ipfsHash, recordType, newVersion, block.timestamp
         );
     }
-
+    /**
+     * @notice Allows the original doctor to correct a faulty record.
+     * The old hash is permanently logged in the event history for auditing.
+     */
+    function updateMedicalRecord(uint256 _recordId, string memory _newIpfsHash) external {
+        MedicalRecord storage rec = medicalRecords[_recordId];
+        require(msg.sender == rec.uploadedBy, "Only the prescribing doctor can update this record");
+        string memory oldHash = rec.ipfsHash;
+        rec.ipfsHash = _newIpfsHash;
+        emit RecordUpdated(_recordId, oldHash, _newIpfsHash, block.timestamp);
+    }
     // ─────────────────────────────────────────────────────────────
     // Read functions
     // ─────────────────────────────────────────────────────────────
@@ -200,7 +211,6 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
     function getRecordCount(address patient) external view returns (uint256) {
         return _patientRecordIds[patient].length;
     }
-
     /**
      * @notice Returns the latest version number of a patient's records.
      *         Useful for checking if a patient's records have been updated.
@@ -208,4 +218,5 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
     function getLatestVersion(address patient) external view returns (uint256) {
         return patientRecordVersion[patient];
     }
+    
 }

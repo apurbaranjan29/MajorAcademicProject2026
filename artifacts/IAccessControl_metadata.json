@@ -7,7 +7,46 @@
 		"abi": [
 			{
 				"inputs": [],
-				"name": "INSURER_ROLE",
+				"name": "DISTRIBUTOR_ROLE",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "MANUFACTURER_ROLE",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "PHARMACIST_ROLE",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "REGULATOR_ROLE",
 				"outputs": [
 					{
 						"internalType": "bytes32",
@@ -46,17 +85,19 @@
 		"devdoc": {
 			"kind": "dev",
 			"methods": {},
+			"title": "DrugAuthenticity",
 			"version": 1
 		},
 		"userdoc": {
 			"kind": "user",
 			"methods": {},
+			"notice": "Tracks drug batches from manufacturer to patient with role-enforced         stage transitions and cross-contract prescription validation at         the point of sale. CHANGES FROM v1:  - CRITICAL FIX: each stage transition now enforces the correct role    (only DISTRIBUTOR can set InTransit, only PHARMACY can set AtPharmacy)  - AtPharmacy stage was missing entirely — receiveAtPharmacy() added  - markAsSold() now validates a valid prescription exists via    IPrescriptionAndDiagnosis.isValidPrescription() AND calls    dispensePrescription() to close the loop  - flagCounterfeit() + CounterfeitFlagged event added  - Full stage history array per batch (audit trail for the panel demo)  - AccessControl interface replaces ad-hoc role mappings  - ReentrancyGuard on all state-changing functions",
 			"version": 1
 		}
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/InsuranceClaims.sol": "IAccessControl"
+			"contracts/DrugAuthenticity.sol": "IAccessControl"
 		},
 		"evmVersion": "osaka",
 		"libraries": {},
@@ -70,12 +111,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"contracts/InsuranceClaims.sol": {
-			"keccak256": "0x5d646033848e2d0e453afe4a5e6799485817a027cb7672a965c397576fddc857",
+		"contracts/DrugAuthenticity.sol": {
+			"keccak256": "0xfa0bd6f6c10845e7ea19a33ee5f60696692a3765605befbb1d6a088de3c10fc9",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://0c9f706c07c3850bc9b21ba2831284ac365dfd7a3778002dd25603c1d04117ed",
-				"dweb:/ipfs/QmRkJKyQV8JxfRUNyzvRmELgh7A7TESJKtGsWDxf9tMJDQ"
+				"bzz-raw://1659e66492d80b70062483051e13b10e33ddf04e8c12e9226460a28ec2a3f8a4",
+				"dweb:/ipfs/QmUBFA9nov1wLgtdC7rbi7H741LEfEwn2ZrfKxCuySQwEv"
 			]
 		}
 	},
