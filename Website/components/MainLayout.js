@@ -6,7 +6,7 @@ import { useWeb3 } from '../context/Web3Context'
 import { Sun, Moon } from 'lucide-react'
 
 export default function MainLayout({ children, title, subtitle }) {
-  const { account } = useWeb3()
+  const { account, connectWallet } = useWeb3()
   const [isDark, setIsDark] = useState(true)
 
   // Apply theme on mount and when toggled
@@ -50,12 +50,15 @@ export default function MainLayout({ children, title, subtitle }) {
 
             <div className="flex items-center gap-4">
               {/* Wallet Status */}
-              <div className="flex items-center gap-2 bg-[var(--card)] border border-[var(--border)] px-3 py-1.5 rounded-full shadow-inner theme-transition">
+              <button
+                onClick={connectWallet}
+                className="flex items-center gap-2 bg-[var(--card)] border border-[var(--border)] px-3 py-1.5 rounded-full shadow-inner theme-transition hover:border-[#0071e3] active:scale-95 cursor-pointer"
+              >
                 <div className={`w-1.5 h-1.5 rounded-full ${account ? 'bg-[#00ff41] pulse-success' : 'bg-[#ff3b30]'}`} />
                 <span className="text-[11px] font-mono">
-                  {account ? `${account.substring(0, 6)}...${account.substring(account.length - 4)}` : 'No Connection'}
+                  {account ? `${account.substring(0, 6)}...${account.substring(account.length - 4)}` : 'Connect Wallet'}
                 </span>
-              </div>
+              </button>
 
               {/* THE TOGGLE BUTTON */}
               <button
