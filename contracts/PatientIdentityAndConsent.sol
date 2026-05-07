@@ -45,6 +45,8 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
     // State
     // ─────────────────────────────────────────────────────────────
     address public registryAdmin;
+    uint256 public totalPatients;
+    address[] public allRegisteredPatients;
 
     mapping(address => bool)   public isRegisteredPatient;
     mapping(address => string) public patientMetadata;      // address → IPFS hash
@@ -104,6 +106,8 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
 
         isRegisteredPatient[patientAddress] = true;
         patientMetadata[patientAddress]     = metadataHash;
+        totalPatients++;
+        allRegisteredPatients.push(msg.sender);
 
         emit PatientRegistered(patientAddress, msg.sender, metadataHash, block.timestamp);
     }
@@ -196,5 +200,11 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
         granted   = r.granted;
         expiresAt = r.expiresAt;
         isExpired = (r.expiresAt > 0 && block.timestamp >= r.expiresAt);
+    }
+    function getAllPatients() external view returns (address[] memory) {
+        return allRegisteredPatients;
+    }
+    function getTotalPatients() external view returns (uint256) {
+        return totalPatients;
     }
 }
