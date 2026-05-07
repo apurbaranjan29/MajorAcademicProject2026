@@ -5,22 +5,9 @@ pragma solidity ^0.8.20;
  * @title  InsuranceClaims
  * @notice Automates insurance claim lifecycle: Submitted → Approved → Paid
  *         or Submitted → Rejected.  Includes ETH-based demo payout.
- *
- * CHANGES FROM v1:
- *  - CRITICAL FIX: payClaim() now uses Checks-Effects-Interactions (CEI)
- *    pattern + nonReentrant guard — the classic reentrancy bug is closed
- *  - Claim cooldown: one claim per patient per 30 days (fraud prevention)
- *  - Duplicate / suspicious claim detection with ClaimFraudFlagged event
- *  - Interface updated to hasValidConsent()
- *  - diagnosisHash added to claim struct — links claim to diagnosis
- *  - payClaim() implemented (was missing in v1 — ClaimPaid event existed
- *    but no function to trigger it)
- *  - receive() payable added so the contract can accept ETH from the insurer
- *    for demo funding
- *  - withdraw() for insurer to recover unused demo ETH
  */
 
-// ─── Interfaces ─────────────────────────────────────────────────────────────
+// Interfaces
 interface IPatientConsent {
     function isRegisteredPatient(address patient) external view returns (bool);
     function hasValidConsent(address patient, address delegate) external view returns (bool);
@@ -30,7 +17,6 @@ interface IAccessControl {
     function hasRole(bytes32 role, address account) external view returns (bool);
     function INSURER_ROLE() external pure returns (bytes32);
 }
-// ────────────────────────────────────────────────────────────────────────────
 
 abstract contract ReentrancyGuard {
     uint256 private _guardStatus = 1;
@@ -44,9 +30,7 @@ abstract contract ReentrancyGuard {
 
 contract InsuranceClaims is ReentrancyGuard {
 
-    // ─────────────────────────────────────────────────────────────
     // Types
-    // ─────────────────────────────────────────────────────────────
     enum ClaimStatus { Submitted, Approved, Rejected, Paid }
 
     struct Claim {
@@ -60,9 +44,7 @@ contract InsuranceClaims is ReentrancyGuard {
         uint256     resolvedAt;         // timestamp of approval/rejection/payment
     }
 
-    // ─────────────────────────────────────────────────────────────
     // State
-    // ─────────────────────────────────────────────────────────────
     IPatientConsent public identityContract;
     IAccessControl  public accessControl;
 
@@ -79,9 +61,7 @@ contract InsuranceClaims is ReentrancyGuard {
     uint256 public constant CLAIM_COOLDOWN    = 30 days;
     uint256 public constant MAX_CLAIMS_WINDOW = 3;          // max 3 claims per 30-day window
 
-    // ─────────────────────────────────────────────────────────────
     // Events
-    // ─────────────────────────────────────────────────────────────
     event ClaimSubmitted(
         uint256 indexed claimId,
         address indexed patient,
@@ -100,9 +80,7 @@ contract InsuranceClaims is ReentrancyGuard {
         uint256 timestamp
     );
 
-    // ─────────────────────────────────────────────────────────────
     // Modifiers
-    // ─────────────────────────────────────────────────────────────
     modifier onlyInsurer() {
         require(
             accessControl.hasRole(accessControl.INSURER_ROLE(), msg.sender),
@@ -119,9 +97,7 @@ contract InsuranceClaims is ReentrancyGuard {
         _;
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Constructor
-    // ─────────────────────────────────────────────────────────────
     constructor(address _identityContract, address _accessControl) {
         require(_identityContract != address(0), "Invalid identity contract");
         require(_accessControl    != address(0), "Invalid access control contract");
@@ -129,14 +105,12 @@ contract InsuranceClaims is ReentrancyGuard {
         accessControl    = IAccessControl(_accessControl);
     }
 
-    // ─────────────────────────────────────────────────────────────
+
     // Receive ETH — insurer funds the contract for demo payouts
-    // ─────────────────────────────────────────────────────────────
     receive() external payable {}
 
-    // ─────────────────────────────────────────────────────────────
+
     // Hospital / clinic functions
-    // ─────────────────────────────────────────────────────────────
 
     /**
      * @notice Submit a new insurance claim on behalf of a patient.
@@ -158,7 +132,7 @@ contract InsuranceClaims is ReentrancyGuard {
         require(amount > 0, "Claim amount must be positive");
         require(bytes(diagnosisHash).length > 0, "Diagnosis hash required");
 
-        // ── Fraud check 1: cooldown ──────────────────────────────
+        // Fraud check 1: cooldown
         if (lastClaimTime[patient] != 0) {
             uint256 elapsed = block.timestamp - lastClaimTime[patient];
             if (elapsed >= CLAIM_COOLDOWN) {
@@ -167,7 +141,7 @@ contract InsuranceClaims is ReentrancyGuard {
             }
         }
 
-        // ── Fraud check 2: rolling window claim count ────────────
+        // Fraud check 2: rolling window claim count
         if (claimsInWindow[patient] >= MAX_CLAIMS_WINDOW) {
             claimCount++;
             // Record it but immediately flag as suspicious
@@ -189,7 +163,7 @@ contract InsuranceClaims is ReentrancyGuard {
             return;
         }
 
-        // ── All checks passed — create claim ─────────────────────
+        // All checks passed — create claim
         claimCount++;
         claims[claimCount] = Claim({
             claimId:       claimCount,
@@ -208,10 +182,7 @@ contract InsuranceClaims is ReentrancyGuard {
         emit ClaimSubmitted(claimCount, patient, msg.sender, amount, diagnosisHash, block.timestamp);
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Insurer functions
-    // ─────────────────────────────────────────────────────────────
-
     /**
      * @notice Approve a submitted claim (insurer only).
      */
@@ -257,12 +228,12 @@ contract InsuranceClaims is ReentrancyGuard {
     function payClaim(uint256 claimId) external onlyInsurer nonReentrant {
         Claim storage c = claims[claimId];
 
-        // ── 1. CHECKS ─────────────────────────────────────────────
+        // CHECKS 
         require(c.claimId != 0,                    "Claim does not exist");
         require(c.status == ClaimStatus.Approved,  "Claim must be Approved before payment");
         require(address(this).balance >= c.amount, "Insufficient contract balance for payout");
 
-        // ── 2. EFFECTS (update state before any external call) ────
+        // EFFECTS (update state before any external call) 
         address payable recipient = payable(c.patient);
         uint256 payoutAmount      = c.amount;
         c.status     = ClaimStatus.Paid;
@@ -270,7 +241,7 @@ contract InsuranceClaims is ReentrancyGuard {
 
         emit ClaimPaid(claimId, recipient, payoutAmount, block.timestamp);
 
-        // ── 3. INTERACTION (ETH transfer last) ────────────────────
+        // INTERACTION (ETH transfer last) 
         (bool success, ) = recipient.call{value: payoutAmount}("");
         require(success, "ETH transfer to patient failed");
     }
@@ -286,10 +257,7 @@ contract InsuranceClaims is ReentrancyGuard {
         require(success, "Withdrawal failed");
     }
 
-    // ─────────────────────────────────────────────────────────────
     // View functions
-    // ─────────────────────────────────────────────────────────────
-
     /// @notice Returns contract ETH balance (useful for demo dashboard)
     function getContractBalance() external view returns (uint256) {
         return address(this).balance;
