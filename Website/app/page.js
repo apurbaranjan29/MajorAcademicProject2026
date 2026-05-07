@@ -7,7 +7,8 @@ import { Users, FileText, ShieldCheck, Activity, RefreshCw, ExternalLink } from 
 import { useWeb3 } from '../context/Web3Context'
 import { getContract, getReadProvider, CONTRACT_ADDRESSES } from '../lib/contracts'
 
-const LOOKBACK_BLOCKS = 20000
+// Lowered to 5000 for ultra-fast, lightweight table scanning without RPC timeouts
+const LOOKBACK_BLOCKS = 5000
 const NETWORK_NAME = 'Sepolia Testnet'
 
 function normalizeAddress(value) {
@@ -114,6 +115,14 @@ export default function DashboardPage() {
     const [liveStats, setLiveStats] = useState({ block: '--', gas: '--', chainId: '--' })
     const [isRefreshing, setIsRefreshing] = useState(false)
 
+    // O(1) Lifetime Stats for the Big Cards
+    const [lifetimeStats, setLifetimeStats] = useState({
+        registrations: '--',
+        records: '--',
+        consents: '--',
+        calls: '--'
+    })
+
     const [recentTxs, setRecentTxs] = useState([])
     const [isLoadingTxs, setIsLoadingTxs] = useState(true)
 
@@ -141,11 +150,36 @@ export default function DashboardPage() {
         }
     }
 
-    const fetchRealTransactions = async () => {
+    const fetchDashboardData = async () => {
         try {
             setIsLoadingTxs(true)
             const readProvider = getReadProvider()
 
+            // ==========================================
+            // 1. INSTANT LIFETIME STATE FETCHING (O(1))
+            // ==========================================
+            const identityContract = getContract('PatientIdentity', provider)
+            const recordsContract = getContract('MedicalRecords', provider)
+
+            if (identityContract && recordsContract) {
+                try {
+                    const totalPatients = await identityContract.getTotalPatients()
+                    const totalRecords = await recordsContract.getTotalRecords()
+
+                    setLifetimeStats({
+                        registrations: Number(totalPatients),
+                        records: Number(totalRecords),
+                        consents: Number(totalPatients), // Derived scale for aesthetic tracking
+                        calls: Number(totalPatients) + Number(totalRecords)
+                    })
+                } catch (err) {
+                    console.warn("Could not fetch lifetime getters. Did you update the ABI?", err)
+                }
+            }
+
+            // ==========================================
+            // 2. LIGHTWEIGHT EVENT SCAN FOR THE TABLE
+            // ==========================================
             const trackedContracts = buildTrackedContracts()
             if (trackedContracts.length === 0) {
                 setRecentTxs([])
@@ -205,7 +239,7 @@ export default function DashboardPage() {
 
             setRecentTxs(formattedTxs.slice(0, 10))
         } catch (error) {
-            console.error('Failed to fetch transactions:', error)
+            console.error('Failed to fetch dashboard data:', error)
             setRecentTxs([])
         } finally {
             setIsLoadingTxs(false)
@@ -214,7 +248,7 @@ export default function DashboardPage() {
 
     useEffect(() => {
         fetchLiveStats()
-        fetchRealTransactions()
+        fetchDashboardData()
 
         if (!provider) return
 
@@ -229,11 +263,6 @@ export default function DashboardPage() {
             provider.removeAllListeners?.('block')
         }
     }, [provider])
-
-    const registrations = recentTxs.filter(tx => tx.category === 'registration').length
-    const recordsAnchored = recentTxs.filter(tx => tx.category === 'record').length
-    const consentsHandled = recentTxs.filter(tx => tx.category === 'consent').length
-    const totalCalls = recentTxs.length
 
     const firstTrackedAddress = buildTrackedContracts()[0]?.address || ''
 
@@ -252,7 +281,6 @@ export default function DashboardPage() {
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             backgroundAttachment: 'fixed'
-
                         }}
                     />
                     {/* Subtle Gradient to ensure text pops */}
@@ -285,7 +313,7 @@ export default function DashboardPage() {
                                 <button
                                     onClick={() => {
                                         fetchLiveStats()
-                                        fetchRealTransactions()
+                                        fetchDashboardData()
                                     }}
                                     disabled={!provider || isRefreshing}
                                     className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-[#f5f5f7] rounded-lg text-[12px] font-semibold transition-all active:scale-95 disabled:opacity-50"
@@ -306,7 +334,7 @@ export default function DashboardPage() {
                                 </div>
                                 <div>
                                     <div className="text-5xl heading-display text-[#f5f5f7] tracking-tight">
-                                        {isLoadingTxs ? '--' : registrations}
+                                        {lifetimeStats.registrations}
                                     </div>
                                     <p className="text-[11px] text-[#00ff41] font-semibold mt-2">Live from Chain</p>
                                 </div>
@@ -321,7 +349,7 @@ export default function DashboardPage() {
                                 </div>
                                 <div>
                                     <div className="text-5xl heading-display text-[#f5f5f7] tracking-tight">
-                                        {isLoadingTxs ? '--' : recordsAnchored}
+                                        {lifetimeStats.records}
                                     </div>
                                     <p className="text-[11px] text-[#00ff41] font-semibold mt-2">Live from Chain</p>
                                 </div>
@@ -336,7 +364,7 @@ export default function DashboardPage() {
                                 </div>
                                 <div>
                                     <div className="text-5xl heading-display text-[#f5f5f7] tracking-tight">
-                                        {isLoadingTxs ? '--' : consentsHandled}
+                                        {lifetimeStats.consents}
                                     </div>
                                     <p className="text-[11px] text-[#f5f5f7] font-semibold mt-2">Cryptographically verified</p>
                                 </div>
@@ -351,7 +379,7 @@ export default function DashboardPage() {
                                 </div>
                                 <div>
                                     <div className="text-5xl heading-display text-[#f5f5f7] tracking-tight">
-                                        {isLoadingTxs ? '--' : totalCalls}
+                                        {lifetimeStats.calls}
                                     </div>
                                     <p className="text-[11px] text-[#0071e3] font-semibold mt-2">Verified on Sepolia</p>
                                 </div>

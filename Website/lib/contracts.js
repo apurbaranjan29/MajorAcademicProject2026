@@ -10,11 +10,11 @@ export const getReadProvider = () =>
 
 // Paste your actual deployed Sepolia addresses here
 export const CONTRACT_ADDRESSES = {
-    PatientIdentity: '0x993b6DddA704AbD3b96779dDa79527478b80c763',
-    MedicalRecords: '0xEC5Fe3D21C4d6aB425602621e17f7Df8d30d1D2b',
-    AccessControl: '0xb7f3D30A7ED79078d96749Bb4D8545750A54DB1e',
-    PrescriptionAndDiagnosis: '0x389EB49f323f73F7662e4803D15131a54f12e8EE',
-    IoTDataLogger: '0xE66550226cffF249B6aF48d33a621484Bd976952'
+    PatientIdentity: '0xe441648F30C3BFf9Ff4e2A7619ae09C8c67a33a0',
+    MedicalRecords: '0xdfC8d7F599Cfa3A39F3688067B6B7DC1333011e4',
+    AccessControl: '0xf5BBcF418941756F996a36bA9408FebA73ef4F29',
+    PrescriptionAndDiagnosis: '0xe38e5Fa756EB0864c007a9B81AC63F4aDC19e94d',
+    IoTDataLogger: '0x2E1Dd4e90e3C724d98Ba3726AaFFce580880c012'
 }
 
 /**

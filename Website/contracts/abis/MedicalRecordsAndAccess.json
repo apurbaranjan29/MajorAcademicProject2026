@@ -3,6 +3,29 @@
         "inputs": [
             {
                 "internalType": "address",
+                "name": "patient",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "ipfsHash",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "recordType",
+                "type": "string"
+            }
+        ],
+        "name": "addMedicalRecord",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
                 "name": "_identityContract",
                 "type": "address"
             }
@@ -97,57 +120,59 @@
         "type": "event"
     },
     {
-        "anonymous": false,
         "inputs": [
             {
-                "indexed": true,
                 "internalType": "uint256",
                 "name": "recordId",
                 "type": "uint256"
             },
             {
-                "indexed": false,
                 "internalType": "string",
-                "name": "oldHash",
+                "name": "accessorRole",
                 "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "newHash",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "timestamp",
-                "type": "uint256"
             }
         ],
-        "name": "RecordUpdated",
-        "type": "event"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "patient",
-                "type": "address"
-            },
+        "name": "viewMedicalRecord",
+        "outputs": [
             {
                 "internalType": "string",
                 "name": "ipfsHash",
                 "type": "string"
-            },
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "allAnchoredRecords",
+        "outputs": [
             {
                 "internalType": "string",
-                "name": "recordType",
+                "name": "",
                 "type": "string"
             }
         ],
-        "name": "addMedicalRecord",
-        "outputs": [],
-        "stateMutability": "nonpayable",
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getAllRecords",
+        "outputs": [
+            {
+                "internalType": "string[]",
+                "name": "",
+                "type": "string[]"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -299,48 +324,6 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_recordId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "string",
-                "name": "_newIpfsHash",
-                "type": "string"
-            }
-        ],
-        "name": "updateMedicalRecord",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "recordId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "string",
-                "name": "accessorRole",
-                "type": "string"
-            }
-        ],
-        "name": "viewMedicalRecord",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "ipfsHash",
-                "type": "string"
-            }
-        ],
-        "stateMutability": "nonpayable",
         "type": "function"
     }
 ]

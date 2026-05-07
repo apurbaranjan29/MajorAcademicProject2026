@@ -112,16 +112,11 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
 }
 
-/* When the .light-theme class is active on the <body> */
 body.light-theme {
     --background: #f5f5f7;
-    /* Swaps Black for Apple Gray */
     --card: #ffffff;
-    /* Swaps Near-Black for Pure White */
     --text-primary: #1d1d1f;
-    /* Swaps Light Text for Dark Text */
     --border: #d2d2d7;
-    /* Swaps Dark Border for Light Border */
     --secondary-bg: #ffffff;
 }
 

@@ -46,7 +46,7 @@ export default function SplashScreen() {
 
             <div className="text-center animate-in slide-in-from-bottom-4 fade-in duration-1000 delay-300">
                 <h1 className="text-2xl heading-display text-[#f5f5f7] mb-3 tracking-tight">
-                    SC-BHIoT
+                    B-IoT
                 </h1>
 
                 {/* Boot Sequence Text */}

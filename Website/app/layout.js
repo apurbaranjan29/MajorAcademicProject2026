@@ -4,7 +4,7 @@ import { Web3Provider } from '../context/Web3Context'
 import SplashScreen from '../components/SplashScreen'
 
 export const metadata = {
-    title: 'SC-BHIoT - Blockchain Healthcare Platform',
+    title: 'B-IoT - Blockchain Healthcare Platform',
     description: 'Secure, transparent IoT-based healthcare data management on Ethereum',
 }
 
