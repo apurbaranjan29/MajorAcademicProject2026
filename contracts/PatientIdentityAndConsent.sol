@@ -45,7 +45,6 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
     // State
     // ─────────────────────────────────────────────────────────────
     address public registryAdmin;
-    address[] public registeredPatientsList;
 
     mapping(address => bool)   public isRegisteredPatient;
     mapping(address => string) public patientMetadata;      // address → IPFS hash
@@ -105,14 +104,9 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
 
         isRegisteredPatient[patientAddress] = true;
         patientMetadata[patientAddress]     = metadataHash;
-        registeredPatientsList.push(patientAddress);
 
         emit PatientRegistered(patientAddress, msg.sender, metadataHash, block.timestamp);
     }
-    // function transferAdmin(address newAdmin) external onlyRegistryAdmin {
-    //     require(newAdmin != address(0), "Cannot transfer to zero address");
-    //     registryAdmin = newAdmin;
-    // }
 
     // ─────────────────────────────────────────────────────────────
     // Patient functions
@@ -180,7 +174,6 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
      * @param  patient   Patient's address
      * @param  delegate  Address requesting access (doctor, insurer, etc.)
      */
-
     function hasValidConsent(address patient, address delegate)
         external
         view
@@ -204,7 +197,4 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
         expiresAt = r.expiresAt;
         isExpired = (r.expiresAt > 0 && block.timestamp >= r.expiresAt);
     }
-    // function getAllRegisteredPatients() external view returns (address[] memory) {
-    //    return registeredPatientsList;
-    //  }
 }
