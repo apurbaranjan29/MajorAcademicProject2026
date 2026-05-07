@@ -56,6 +56,7 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
     IPatientConsent public identityContract;
 
     uint256 public recordCount;
+    string[] public allAnchoredRecords;
 
     // recordId => MedicalRecord
     mapping(uint256 => MedicalRecord) public medicalRecords;
@@ -148,6 +149,7 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
         });
 
         _patientRecordIds[patient].push(recordCount);
+        allAnchoredRecords.push(recordCID);
 
         emit RecordAdded(
             recordCount, patient, msg.sender,
@@ -217,6 +219,12 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
      */
     function getLatestVersion(address patient) external view returns (uint256) {
         return patientRecordVersion[patient];
+    }
+    function getTotalRecords() external view returns (uint256) {
+        return recordCount;
+    }
+    function getAllRecords() external view returns (string[] memory) {
+        return allAnchoredRecords;
     }
     
 }
