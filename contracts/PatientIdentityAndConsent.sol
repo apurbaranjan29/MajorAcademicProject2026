@@ -5,18 +5,9 @@ pragma solidity ^0.8.20;
  * @title  PatientIdentityAndConsent
  * @notice Registers patients, manages metadata hashes (IPFS), and controls
  *         time-limited consent granted to doctors / hospitals / insurers.
- *
- * CHANGES FROM v1:
- *  - Consent now carries an expiresAt timestamp (GDPR-aligned, time-limited)
- *  - hasValidConsent() view replaces the raw `consents` bool mapping for
- *    cross-contract checks — all other contracts call this
- *  - ReentrancyGuard added to all state-changing functions
- *  - Event names standardised to PascalCase
- *  - Duplicate registration check was already there; strengthened guard
- *  - getConsentDetails() added so the frontend can display expiry
  */
 
-// ─── Minimal inline ReentrancyGuard (no external dependency needed) ────────
+// Minimal inline ReentrancyGuard (no external dependency needed) 
 abstract contract ReentrancyGuard {
     uint256 private _guardStatus = 1;
     modifier nonReentrant() {
@@ -26,24 +17,21 @@ abstract contract ReentrancyGuard {
         _guardStatus = 1;
     }
 }
-// ────────────────────────────────────────────────────────────────────────────
+
 
 contract PatientIdentityAndConsent is ReentrancyGuard {
-
-    // ─────────────────────────────────────────────────────────────
     // Types
-    // ─────────────────────────────────────────────────────────────
 
     /// @dev Replaces the old `mapping(address=>mapping(address=>bool))`
-    ///      Consent is only valid when granted == true AND block.timestamp < expiresAt
+    /// Consent is only valid when granted == true AND block.timestamp < expiresAt
+
     struct ConsentRecord {
         bool    granted;
         uint256 expiresAt;   // Unix timestamp; 0 = not granted
     }
 
-    // ─────────────────────────────────────────────────────────────
     // State
-    // ─────────────────────────────────────────────────────────────
+
     address public registryAdmin;
     uint256 public totalPatients;
     address[] public allRegisteredPatients;
@@ -57,17 +45,13 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
     // Default consent duration: 365 days (can be overridden per grant)
     uint256 public constant DEFAULT_CONSENT_DURATION = 365 days;
 
-    // ─────────────────────────────────────────────────────────────
     // Events  (all PascalCase, all indexed for fast log filtering)
-    // ─────────────────────────────────────────────────────────────
     event PatientRegistered(address indexed patient, address indexed registeredBy, string metadataHash, uint256 timestamp);
     event MetadataUpdated(address indexed patient, string newMetadataHash, uint256 timestamp);
     event ConsentGranted(address indexed patient, address indexed delegate, uint256 expiresAt);
     event ConsentRevoked(address indexed patient, address indexed delegate, uint256 revokedAt);
 
-    // ─────────────────────────────────────────────────────────────
     // Modifiers
-    // ─────────────────────────────────────────────────────────────
     modifier onlyRegistryAdmin() {
         require(msg.sender == registryAdmin, "Only RegistryAdmin can call this");
         _;
@@ -77,18 +61,13 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
         _;
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Constructor
-    // ─────────────────────────────────────────────────────────────
     constructor(address _registryAdmin) {
         require(_registryAdmin != address(0), "Invalid admin address");
         registryAdmin = _registryAdmin;
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Admin functions
-    // ─────────────────────────────────────────────────────────────
-
     /**
      * @notice Register a new patient.  Only the registry admin calls this
      *         (e.g., hospital onboarding desk).
@@ -112,10 +91,7 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
         emit PatientRegistered(patientAddress, msg.sender, metadataHash, block.timestamp);
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Patient functions
-    // ─────────────────────────────────────────────────────────────
-
     /**
      * @notice Patient updates their own metadata IPFS hash.
      * @param  newMetadataHash  New IPFS CID
@@ -168,9 +144,7 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
         emit ConsentRevoked(msg.sender, delegate, block.timestamp);
     }
 
-    // ─────────────────────────────────────────────────────────────
     // View functions  (called by all other contracts)
-    // ─────────────────────────────────────────────────────────────
 
     /**
      * @notice Primary cross-contract consent check.
