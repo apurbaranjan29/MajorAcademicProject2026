@@ -5,25 +5,16 @@ pragma solidity ^0.8.20;
  * @title  MedicalRecordsAndAccess
  * @notice Stores encrypted medical record IPFS hashes on-chain and enforces
  *         patient-controlled, time-limited consent before allowing access.
- *
- * CHANGES FROM v1:
- *  - Interface updated to use hasValidConsent() — now checks expiry too
- *  - Record versioning: each patient has a version counter; updates append
- *    a new record rather than overwrite (immutable audit trail)
- *  - RecordAccessed event now includes the accessor's role string
- *  - getRecordsByPatient() added for frontend pagination
- *  - nonReentrant guard on all write functions
- *  - viewMedicalRecord split: returns hash + emits access log
  */
 
-// ─── Interface for PatientIdentityAndConsent ────────────────────────────────
+// Interface for PatientIdentityAndConsent
 interface IPatientConsent {
     function isRegisteredPatient(address patient) external view returns (bool);
     function hasValidConsent(address patient, address delegate) external view returns (bool);
 }
-// ────────────────────────────────────────────────────────────────────────────
 
-// ─── Inline ReentrancyGuard ──────────────────────────────────────────────────
+
+// Inline ReentrancyGuard
 abstract contract ReentrancyGuard {
     uint256 private _guardStatus = 1;
     modifier nonReentrant() {
@@ -33,13 +24,11 @@ abstract contract ReentrancyGuard {
         _guardStatus = 1;
     }
 }
-// ────────────────────────────────────────────────────────────────────────────
 
 contract MedicalRecordsAndAccess is ReentrancyGuard {
 
-    // ─────────────────────────────────────────────────────────────
     // Types
-    // ─────────────────────────────────────────────────────────────
+
     struct MedicalRecord {
         uint256 recordId;
         address patient;
@@ -50,9 +39,7 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
         uint256 timestamp;
     }
 
-    // ─────────────────────────────────────────────────────────────
     // State
-    // ─────────────────────────────────────────────────────────────
     IPatientConsent public identityContract;
 
     uint256 public recordCount;
@@ -67,9 +54,8 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
     // patient => current version counter
     mapping(address => uint256) public patientRecordVersion;
 
-    // ─────────────────────────────────────────────────────────────
+   
     // Events
-    // ─────────────────────────────────────────────────────────────
     event RecordAdded(
         uint256 indexed recordId,
         address indexed patient,
@@ -88,9 +74,7 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
     );
     event RecordUpdated(uint256 indexed recordId, string oldHash, string newHash, uint256 timestamp);
 
-    // ─────────────────────────────────────────────────────────────
     // Modifiers
-    // ─────────────────────────────────────────────────────────────
     modifier onlyRegisteredPatient(address patient) {
         require(identityContract.isRegisteredPatient(patient), "Patient not registered");
         _;
@@ -100,18 +84,13 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
         _;
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Constructor
-    // ─────────────────────────────────────────────────────────────
     constructor(address _identityContract) {
         require(_identityContract != address(0), "Invalid identity contract address");
         identityContract = IPatientConsent(_identityContract);
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Write functions
-    // ─────────────────────────────────────────────────────────────
-
     /**
      * @notice Add a medical record for a patient.
      *         Caller must hold valid patient consent.
@@ -156,6 +135,7 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
             ipfsHash, recordType, newVersion, block.timestamp
         );
     }
+
     /**
      * @notice Allows the original doctor to correct a faulty record.
      * The old hash is permanently logged in the event history for auditing.
@@ -167,10 +147,8 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
         rec.ipfsHash = _newIpfsHash;
         emit RecordUpdated(_recordId, oldHash, _newIpfsHash, block.timestamp);
     }
-    // ─────────────────────────────────────────────────────────────
-    // Read functions
-    // ─────────────────────────────────────────────────────────────
 
+    // Read functions
     /**
      * @notice View a specific medical record and emit an access log.
      *         Requires valid patient consent.
