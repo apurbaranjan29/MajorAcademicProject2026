@@ -61,24 +61,6 @@
         "type": "event"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "delegate",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "durationDays",
-                "type": "uint256"
-            }
-        ],
-        "name": "grantConsent",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
         "anonymous": false,
         "inputs": [
             {
@@ -135,47 +117,16 @@
         "type": "event"
     },
     {
-        "inputs": [
+        "inputs": [],
+        "name": "DEFAULT_CONSENT_DURATION",
+        "outputs": [
             {
-                "internalType": "address",
-                "name": "patientAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "string",
-                "name": "metadataHash",
-                "type": "string"
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
-        "name": "registerPatient",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "delegate",
-                "type": "address"
-            }
-        ],
-        "name": "revokeConsent",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "newMetadataHash",
-                "type": "string"
-            }
-        ],
-        "name": "updateMetadata",
-        "outputs": [],
-        "stateMutability": "nonpayable",
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -192,19 +143,6 @@
                 "internalType": "address",
                 "name": "",
                 "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "DEFAULT_CONSENT_DURATION",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -274,6 +212,24 @@
         "inputs": [
             {
                 "internalType": "address",
+                "name": "delegate",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "durationDays",
+                "type": "uint256"
+            }
+        ],
+        "name": "grantConsent",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
                 "name": "patient",
                 "type": "address"
             },
@@ -333,6 +289,24 @@
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "patientAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "metadataHash",
+                "type": "string"
+            }
+        ],
+        "name": "registerPatient",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "registryAdmin",
         "outputs": [
@@ -346,6 +320,19 @@
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "delegate",
+                "type": "address"
+            }
+        ],
+        "name": "revokeConsent",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "totalPatients",
         "outputs": [
@@ -356,6 +343,19 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "newMetadataHash",
+                "type": "string"
+            }
+        ],
+        "name": "updateMetadata",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     }
 ]

@@ -206,8 +206,8 @@ export default function DataRetrieval() {
                                                 key={rec.id}
                                                 onClick={() => setSelectedRecord(rec)}
                                                 className={`w-full p-4 rounded-xl text-left flex justify-between items-center transition-all ${selectedRecord.id === rec.id
-                                                        ? 'bg-[#0071e3]/10 border border-[#0071e3]/20 shadow-inner'
-                                                        : 'hover:bg-[#f5f5f7] border border-transparent'
+                                                    ? 'bg-[#0071e3]/10 border border-[#0071e3]/20 shadow-inner'
+                                                    : 'hover:bg-[#f5f5f7] border border-transparent'
                                                     }`}
                                             >
                                                 <div>
