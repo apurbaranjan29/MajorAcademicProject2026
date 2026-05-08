@@ -6,20 +6,9 @@ pragma solidity ^0.8.20;
  * @notice Doctors write diagnoses and prescriptions on-chain (IPFS hash +
  *         metadata).  Prescriptions have an expiry and a lifecycle:
  *         ISSUED → DISPENSED | EXPIRED.
- *
- * CHANGES FROM v1:
- *  - PrescriptionStatus enum: ISSUED, DISPENSED, EXPIRED
- *  - Prescriptions carry an expiresAt timestamp (default 180 days / 6 months)
- *  - dispensePrescription() added — only pharmacists can call it
- *  - expirePrescription() can be called by anyone after expiresAt
- *  - getPrescription() getter added — DrugAuthenticity.sol calls this
- *  - isValidPrescription() pure view — returns bool for cross-contract use
- *  - Interface updated to hasValidConsent()
- *  - ReentrancyGuard on all state-changing functions
- *  - Role checks via HealthcareAccessControl interface
  */
 
-// ─── Interfaces ─────────────────────────────────────────────────────────────
+// Interfaces 
 interface IPatientConsent {
     function isRegisteredPatient(address patient) external view returns (bool);
     function hasValidConsent(address patient, address delegate) external view returns (bool);
@@ -30,7 +19,7 @@ interface IAccessControl {
     function PHARMACIST_ROLE() external pure returns (bytes32);
     function DOCTOR_ROLE()     external pure returns (bytes32);
 }
-// ────────────────────────────────────────────────────────────────────────────
+
 
 abstract contract ReentrancyGuard {
     uint256 private _guardStatus = 1;
@@ -43,10 +32,7 @@ abstract contract ReentrancyGuard {
 
 contract PrescriptionAndDiagnosis is ReentrancyGuard {
 
-    // ─────────────────────────────────────────────────────────────
     // Types
-    // ─────────────────────────────────────────────────────────────
-
     enum PrescriptionStatus { ISSUED, DISPENSED, EXPIRED }
 
     struct Diagnosis {
@@ -71,9 +57,7 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
         uint256 dispensedAt;
     }
 
-    // ─────────────────────────────────────────────────────────────
     // State
-    // ─────────────────────────────────────────────────────────────
     IPatientConsent public identityContract;
     IAccessControl  public accessControl;
 
@@ -91,9 +75,8 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
     // Default prescription validity: 180 days (6 months)
     uint256 public constant DEFAULT_PRESCRIPTION_VALIDITY = 180 days;
 
-    // ─────────────────────────────────────────────────────────────
+
     // Events
-    // ─────────────────────────────────────────────────────────────
     event DiagnosisAdded(
         uint256 indexed diagnosisId,
         address indexed patient,
@@ -118,9 +101,7 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
         uint256 expiredAt
     );
 
-    // ─────────────────────────────────────────────────────────────
     // Modifiers
-    // ─────────────────────────────────────────────────────────────
     modifier onlyRegisteredPatient(address patient) {
         require(identityContract.isRegisteredPatient(patient), "Patient not registered");
         _;
@@ -137,9 +118,7 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
         _;
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Constructor
-    // ─────────────────────────────────────────────────────────────
     constructor(address _identityContract, address _accessControl) {
         require(_identityContract != address(0), "Invalid identity contract");
         require(_accessControl    != address(0), "Invalid access control contract");
@@ -147,14 +126,13 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
         accessControl    = IAccessControl(_accessControl);
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // Doctor functions
-    // ─────────────────────────────────────────────────────────────
 
+    // Doctor functions
     /**
      * @notice Add a diagnosis for a patient.
      *         Caller must be a consented doctor.
      */
+
     function addDiagnosis(
         address patient,
         string  memory diagnosisDetails,
@@ -219,9 +197,7 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
         emit PrescriptionAdded(prescriptionCount, patient, msg.sender, expiresAt);
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Pharmacist functions
-    // ─────────────────────────────────────────────────────────────
 
     /**
      * @notice Mark a prescription as dispensed.
@@ -260,10 +236,7 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
         emit PrescriptionExpired(prescriptionId, p.patient, block.timestamp);
     }
 
-    // ─────────────────────────────────────────────────────────────
     // View functions
-    // ─────────────────────────────────────────────────────────────
-
     /**
      * @notice Primary cross-contract check used by DrugAuthenticity.
      *         Returns true only if prescription is ISSUED and not expired.

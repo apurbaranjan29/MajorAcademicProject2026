@@ -6,28 +6,18 @@ pragma solidity ^0.8.20;
  * @notice Anchors batched H-IoT device readings on-chain as IPFS hashes and
  *         emits on-chain alerts when vital sign thresholds are crossed.
  *
- * This contract is the blockchain anchor for the H-IoT layer described in
+ * This contract is the blockchain anchor for the B-IoT layer described in
  * the SC-BHIoT paper.  Raw vitals are NEVER stored on-chain; only the IPFS
  * CID of an encrypted vitals batch is stored.  Threshold events are fully
  * on-chain so the frontend can subscribe and show live alerts.
- *
- * NEW CONTRACT — does not exist in v1.
- *
- * Architecture:
- *  IoT Device (Python sim) → MQTT broker → Node.js backend
- *    → encrypt + upload to IPFS → get CID
- *    → call logVitalsBatch() on this contract
- *    → smart contract checks thresholds and emits AlertTriggered if needed
- *    → frontend WebSocket receives the event and shows the alert dashboard
  */
 
-// ─── Interface ───────────────────────────────────────────────────────────────
+// Interface
 interface IAccessControl {
     function hasRole(bytes32 role, address account) external view returns (bool);
     function IOT_DEVICE_ROLE() external pure returns (bytes32);
     function REGULATOR_ROLE()  external pure returns (bytes32);
 }
-// ─────────────────────────────────────────────────────────────────────────────
 
 abstract contract ReentrancyGuard {
     uint256 private _guardStatus = 1;
@@ -41,10 +31,9 @@ abstract contract ReentrancyGuard {
 
 contract IoTDataLogger is ReentrancyGuard {
 
-    // ─────────────────────────────────────────────────────────────
     // Vital sign threshold constants
     // These match the H-IoT alert thresholds from the paper.
-    // ─────────────────────────────────────────────────────────────
+
     uint256 public constant HR_HIGH    = 100;   // bpm  — tachycardia
     uint256 public constant HR_LOW     = 50;    // bpm  — bradycardia
     uint256 public constant SPO2_LOW   = 94;    // %    — hypoxia
@@ -53,10 +42,7 @@ contract IoTDataLogger is ReentrancyGuard {
     uint256 public constant GLUCOSE_HIGH = 180; // mg/dL — hyperglycaemia (post-meal)
     uint256 public constant GLUCOSE_LOW  = 70;  // mg/dL — hypoglycaemia
 
-    // ─────────────────────────────────────────────────────────────
     // Types
-    // ─────────────────────────────────────────────────────────────
-
     struct VitalsLog {
         uint256 logId;
         address device;         // IoT device address
@@ -75,9 +61,8 @@ contract IoTDataLogger is ReentrancyGuard {
         uint256 timestamp;
     }
 
-    // ─────────────────────────────────────────────────────────────
+
     // State
-    // ─────────────────────────────────────────────────────────────
     IAccessControl public accessControl;
 
     uint256 public logCount;
@@ -96,9 +81,8 @@ contract IoTDataLogger is ReentrancyGuard {
     // device address => associated patient
     mapping(address => address) public devicePatient;
 
-    // ─────────────────────────────────────────────────────────────
+
     // Events
-    // ─────────────────────────────────────────────────────────────
     event DeviceRegistered(
         address indexed device,
         address indexed patient,
@@ -125,9 +109,7 @@ contract IoTDataLogger is ReentrancyGuard {
         uint256 timestamp
     );
 
-    // ─────────────────────────────────────────────────────────────
     // Modifiers
-    // ─────────────────────────────────────────────────────────────
     modifier onlyRegisteredDevice() {
         require(isRegisteredDevice[msg.sender], "Device not registered");
         _;
@@ -140,18 +122,14 @@ contract IoTDataLogger is ReentrancyGuard {
         _;
     }
 
-    // ─────────────────────────────────────────────────────────────
+
     // Constructor
-    // ─────────────────────────────────────────────────────────────
     constructor(address _accessControl) {
         require(_accessControl != address(0), "Invalid access control address");
         accessControl = IAccessControl(_accessControl);
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Device management (admin only)
-    // ─────────────────────────────────────────────────────────────
-
     /**
      * @notice Register a new IoT device and associate it with a patient.
      *         The device address is the wallet used by the backend IoT bridge.
@@ -174,10 +152,7 @@ contract IoTDataLogger is ReentrancyGuard {
         emit DeviceDeregistered(device, block.timestamp);
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Vitals logging (called by the Node.js backend after IPFS upload)
-    // ─────────────────────────────────────────────────────────────
-
     /**
      * @notice Log a batch of vitals readings anchored by their IPFS hash.
      *         Called by the Node.js IoT ingestion service after encrypting
@@ -252,10 +227,10 @@ contract IoTDataLogger is ReentrancyGuard {
         emit AlertTriggered(alertCount, patient, alertType, value, threshold, severity, block.timestamp);
     }
 
-    // ─────────────────────────────────────────────────────────────
+
     // Convenience: backend can call this to check thresholds on-chain
     // instead of implementing logic client-side
-    // ─────────────────────────────────────────────────────────────
+
 
     /**
      * @notice Returns whether a heart rate reading crosses any threshold.
@@ -290,10 +265,7 @@ contract IoTDataLogger is ReentrancyGuard {
         return (false, "", "");
     }
 
-    // ─────────────────────────────────────────────────────────────
     // View functions
-    // ─────────────────────────────────────────────────────────────
-
     /// @notice Returns all vitals log IDs for a patient
     function getLogsByPatient(address patient) external view returns (uint256[] memory) {
         return _patientLogs[patient];

@@ -6,21 +6,9 @@ pragma solidity ^0.8.20;
  * @notice Tracks drug batches from manufacturer to patient with role-enforced
  *         stage transitions and cross-contract prescription validation at
  *         the point of sale.
- *
- * CHANGES FROM v1:
- *  - CRITICAL FIX: each stage transition now enforces the correct role
- *    (only DISTRIBUTOR can set InTransit, only PHARMACY can set AtPharmacy)
- *  - AtPharmacy stage was missing entirely — receiveAtPharmacy() added
- *  - markAsSold() now validates a valid prescription exists via
- *    IPrescriptionAndDiagnosis.isValidPrescription() AND calls
- *    dispensePrescription() to close the loop
- *  - flagCounterfeit() + CounterfeitFlagged event added
- *  - Full stage history array per batch (audit trail for the panel demo)
- *  - AccessControl interface replaces ad-hoc role mappings
- *  - ReentrancyGuard on all state-changing functions
  */
 
-// ─── Interfaces ─────────────────────────────────────────────────────────────
+// Interfaces
 interface IAccessControl {
     function hasRole(bytes32 role, address account) external view returns (bool);
     function MANUFACTURER_ROLE() external pure returns (bytes32);
@@ -62,9 +50,7 @@ contract DrugAuthenticity is ReentrancyGuard {
         string      note;             // optional note per stage
     }
 
-    // ─────────────────────────────────────────────────────────────
     // State
-    // ─────────────────────────────────────────────────────────────
     IAccessControl            public accessControl;
     IPrescriptionAndDiagnosis public prescriptionContract;
 
@@ -74,9 +60,7 @@ contract DrugAuthenticity is ReentrancyGuard {
     // batchId => stage history (full audit trail)
     mapping(string => StageEntry[])  private _stageHistory;
 
-    // ─────────────────────────────────────────────────────────────
     // Events
-    // ─────────────────────────────────────────────────────────────
     event DrugRegistered(
         string  indexed batchId,
         string  drugName,
@@ -107,9 +91,7 @@ contract DrugAuthenticity is ReentrancyGuard {
         uint256 timestamp
     );
 
-    // ─────────────────────────────────────────────────────────────
     // Modifiers
-    // ─────────────────────────────────────────────────────────────
     modifier onlyManufacturer() {
         require(
             accessControl.hasRole(accessControl.MANUFACTURER_ROLE(), msg.sender),
@@ -147,9 +129,8 @@ contract DrugAuthenticity is ReentrancyGuard {
         _;
     }
 
-    // ─────────────────────────────────────────────────────────────
+
     // Constructor
-    // ─────────────────────────────────────────────────────────────
     constructor(address _accessControl, address _prescriptionContract) {
         require(_accessControl         != address(0), "Invalid access control");
         require(_prescriptionContract  != address(0), "Invalid prescription contract");
@@ -157,10 +138,8 @@ contract DrugAuthenticity is ReentrancyGuard {
         prescriptionContract  = IPrescriptionAndDiagnosis(_prescriptionContract);
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // Manufacturer functions
-    // ─────────────────────────────────────────────────────────────
 
+    // Manufacturer functions
     /**
      * @notice Register a new drug batch on-chain.
      *         Only callable by wallets with MANUFACTURER_ROLE.
@@ -220,10 +199,7 @@ contract DrugAuthenticity is ReentrancyGuard {
         emit DrugTransferredToDistributor(batchId, msg.sender, distributor, block.timestamp);
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Pharmacy functions
-    // ─────────────────────────────────────────────────────────────
-
     /**
      * @notice Pharmacy confirms receipt of the batch.
      *         Only callable by wallets with PHARMACIST_ROLE.
@@ -265,27 +241,25 @@ contract DrugAuthenticity is ReentrancyGuard {
         require(b.currentOwner == msg.sender,      "Not the current owner");
         require(b.status == DrugStatus.AtPharmacy, "Batch must be AtPharmacy before sale");
 
-        // ── Cross-contract prescription validation ────────────────
+        // Cross-contract prescription validation 
         require(
             prescriptionContract.isValidPrescription(prescriptionId),
             "No valid, unexpired prescription found"
         );
 
-        // ── Update state BEFORE external call (CEI pattern) ───────
+        // Update state BEFORE external call (CEI pattern) 
         b.status    = DrugStatus.Sold;
         b.updatedAt = block.timestamp;
 
         _addStageEntry(batchId, DrugStatus.Sold, msg.sender, "Sold to patient");
         emit DrugSold(batchId, msg.sender, prescriptionId, block.timestamp);
 
-        // ── Mark prescription as dispensed ────────────────────────
+        // Mark prescription as dispensed 
         prescriptionContract.dispensePrescription(prescriptionId);
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // Counterfeit flagging — anyone can flag, regulator can unflag
-    // ─────────────────────────────────────────────────────────────
 
+    // Counterfeit flagging — anyone can flag, regulator can unflag
     /**
      * @notice Flag a batch as potentially counterfeit.
      *         Any registered user can flag — regulators investigate.
@@ -320,10 +294,8 @@ contract DrugAuthenticity is ReentrancyGuard {
         _addStageEntry(batchId, previousStatus, msg.sender, "Flag cleared by regulator");
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // View functions
-    // ─────────────────────────────────────────────────────────────
 
+    // View functions
     /**
      * @notice Public drug verification — anyone can call this.
      *         Used by the QR code scanner on the website.
@@ -358,9 +330,7 @@ contract DrugAuthenticity is ReentrancyGuard {
         return _stageHistory[batchId];
     }
 
-    // ─────────────────────────────────────────────────────────────
     // Internal helpers
-    // ─────────────────────────────────────────────────────────────
     function _addStageEntry(
         string memory batchId,
         DrugStatus    stage,
