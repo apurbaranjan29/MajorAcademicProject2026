@@ -128,7 +128,7 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
         });
 
         _patientRecordIds[patient].push(recordCount);
-        allAnchoredRecords.push(recordCID);
+        allAnchoredRecords.push(ipfsHash);
 
         emit RecordAdded(
             recordCount, patient, msg.sender,
