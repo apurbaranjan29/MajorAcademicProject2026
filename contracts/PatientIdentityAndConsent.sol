@@ -86,7 +86,7 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
         isRegisteredPatient[patientAddress] = true;
         patientMetadata[patientAddress]     = metadataHash;
         totalPatients++;
-        allRegisteredPatients.push(msg.sender);
+        allRegisteredPatients.push(patientAddress);
 
         emit PatientRegistered(patientAddress, msg.sender, metadataHash, block.timestamp);
     }
