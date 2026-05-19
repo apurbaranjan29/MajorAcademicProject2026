@@ -2,10 +2,10 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title  DrugAuthenticity
- * @notice Tracks drug batches from manufacturer to patient with role-enforced
- *         stage transitions and cross-contract prescription validation at
- *         the point of sale.
+ * DrugAuthenticity
+ * Tracks drug batches from manufacturer to patient with role-enforced
+ * stage transitions and cross-contract prescription validation at
+ * the point of sale.
  */
 
 // Interfaces
@@ -141,8 +141,8 @@ contract DrugAuthenticity is ReentrancyGuard {
 
     // Manufacturer functions
     /**
-     * @notice Register a new drug batch on-chain.
-     *         Only callable by wallets with MANUFACTURER_ROLE.
+     * Register a new drug batch on-chain.
+     * Only callable by wallets with MANUFACTURER_ROLE.
      */
     function registerDrug(
         string memory batchId,
@@ -172,9 +172,9 @@ contract DrugAuthenticity is ReentrancyGuard {
     }
 
     /**
-     * @notice Transfer batch to a distributor.
-     *         Only the current owner (manufacturer) can call this.
-     *         Recipient must hold DISTRIBUTOR_ROLE.
+     * Transfer batch to a distributor.
+     * Only the current owner (manufacturer) can call this.
+     * Recipient must hold DISTRIBUTOR_ROLE.
      */
     function transferToDistributor(string memory batchId, address distributor)
         external
@@ -201,9 +201,9 @@ contract DrugAuthenticity is ReentrancyGuard {
 
     // Pharmacy functions
     /**
-     * @notice Pharmacy confirms receipt of the batch.
-     *         Only callable by wallets with PHARMACIST_ROLE.
-     *         Batch must be InTransit and pharmacy must be the current owner.
+     * Pharmacy confirms receipt of the batch.
+     * Only callable by wallets with PHARMACIST_ROLE.
+     * Batch must be InTransit and pharmacy must be the current owner.
      */
     function receiveAtPharmacy(string memory batchId)
         external
@@ -224,11 +224,11 @@ contract DrugAuthenticity is ReentrancyGuard {
     }
 
     /**
-     * @notice Sell the drug to a patient.
-     *         Requires a valid, unexpired prescription.
-     *         Calls PrescriptionAndDiagnosis.dispensePrescription() to close the loop.
-     * @param  batchId          The drug batch being sold
-     * @param  prescriptionId   ID of the patient's prescription from PrescriptionAndDiagnosis
+     * Sell the drug to a patient.
+     * Requires a valid, unexpired prescription.
+     * Calls PrescriptionAndDiagnosis.dispensePrescription() to close the loop.
+     * batchId=The drug batch being sold
+     * prescriptionId=ID of the patient's prescription from PrescriptionAndDiagnosis
      */
     function markAsSold(string memory batchId, uint256 prescriptionId)
         external
@@ -261,8 +261,8 @@ contract DrugAuthenticity is ReentrancyGuard {
 
     // Counterfeit flagging — anyone can flag, regulator can unflag
     /**
-     * @notice Flag a batch as potentially counterfeit.
-     *         Any registered user can flag — regulators investigate.
+     *Flag a batch as potentially counterfeit.
+     *Any registered user can flag — regulators investigate.
      */
     function flagCounterfeit(string memory batchId, string memory reason)
         external
@@ -278,7 +278,7 @@ contract DrugAuthenticity is ReentrancyGuard {
     }
 
     /**
-     * @notice Regulator clears a false-positive counterfeit flag.
+     *Regulator clears a false-positive counterfeit flag.
      */
     function clearFlag(string memory batchId, DrugStatus previousStatus)
         external
@@ -297,8 +297,8 @@ contract DrugAuthenticity is ReentrancyGuard {
 
     // View functions
     /**
-     * @notice Public drug verification — anyone can call this.
-     *         Used by the QR code scanner on the website.
+     * Public drug verification - anyone can call this.
+     * Used by the QR code scanner on the website.
      */
     function verifyDrug(string memory batchId)
         external
@@ -318,8 +318,8 @@ contract DrugAuthenticity is ReentrancyGuard {
     }
 
     /**
-     * @notice Returns the full stage history for a batch.
-     *         Powers the supply chain timeline UI on the website.
+     * Returns the full stage history for a batch.
+     * Powers the supply chain timeline UI on the website.
      */
     function getStageHistory(string memory batchId)
         external
