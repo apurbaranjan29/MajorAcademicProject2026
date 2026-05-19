@@ -2,10 +2,10 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title  IoTDataLogger
- * @notice Anchors batched H-IoT device readings on-chain as IPFS hashes and
- *         emits on-chain alerts when vital sign thresholds are crossed.
- *
+ * IoTDataLogger
+ * Anchors batched H-IoT device readings on-chain as IPFS hashes and
+ * emits on-chain alerts when vital sign thresholds are crossed.
+
  * This contract is the blockchain anchor for the B-IoT layer described in
  * the SC-BHIoT paper.  Raw vitals are NEVER stored on-chain; only the IPFS
  * CID of an encrypted vitals batch is stored.  Threshold events are fully
@@ -131,8 +131,8 @@ contract IoTDataLogger is ReentrancyGuard {
 
     // Device management (admin only)
     /**
-     * @notice Register a new IoT device and associate it with a patient.
-     *         The device address is the wallet used by the backend IoT bridge.
+     * Register a new IoT device and associate it with a patient.
+     * The device address is the wallet used by the backend IoT bridge.
      */
     function registerDevice(address device, address patient) external onlyAdmin nonReentrant {
         require(device  != address(0), "Invalid device address");
@@ -145,7 +145,7 @@ contract IoTDataLogger is ReentrancyGuard {
         emit DeviceRegistered(device, patient, block.timestamp);
     }
 
-    /// @notice Remove a device from the whitelist (lost / replaced / retired)
+    /// Remove a device from the whitelist (lost / replaced / retired)
     function deregisterDevice(address device) external onlyAdmin nonReentrant {
         require(isRegisteredDevice[device], "Device not registered");
         isRegisteredDevice[device] = false;
@@ -154,10 +154,10 @@ contract IoTDataLogger is ReentrancyGuard {
 
     // Vitals logging (called by the Node.js backend after IPFS upload)
     /**
-     * @notice Log a batch of vitals readings anchored by their IPFS hash.
-     *         Called by the Node.js IoT ingestion service after encrypting
-     *         and uploading the readings to IPFS.
-     * @param  ipfsHash   IPFS CID of the encrypted vitals JSON batch
+     * Log a batch of vitals readings anchored by their IPFS hash.
+     * Called by the Node.js IoT ingestion service after encrypting
+     * and uploading the readings to IPFS.
+     * ipfsHash=IPFS CID of the encrypted vitals JSON batch
      */
     function logVitalsBatch(string memory ipfsHash)
         external
@@ -182,16 +182,16 @@ contract IoTDataLogger is ReentrancyGuard {
     }
 
     /**
-     * @notice Trigger a threshold alert.
-     *         Called by the Node.js backend when it detects a threshold
-     *         crossing in the raw sensor data BEFORE uploading to IPFS.
-     *         The alert is stored on-chain for an immutable audit record.
+     * Trigger a threshold alert.
+     * Called by the Node.js backend when it detects a threshold
+     * crossing in the raw sensor data BEFORE uploading to IPFS.
+     * The alert is stored on-chain for an immutable audit record.
      *
-     * @param  patient    Patient being monitored
-     * @param  alertType  String label: "HR_HIGH", "HR_LOW", "SPO2_LOW", etc.
-     * @param  value      The actual sensor reading that triggered the alert
-     * @param  threshold  The threshold constant that was crossed
-     * @param  severity   "WARNING" or "CRITICAL"
+     * patient=Patient being monitored
+     * alertType=String label: "HR_HIGH", "HR_LOW", "SPO2_LOW", etc.
+     * value=The actual sensor reading that triggered the alert
+     * threshold=The threshold constant that was crossed
+     * severity="WARNING" or "CRITICAL"
      */
     function triggerAlert(
         address patient,
@@ -233,8 +233,8 @@ contract IoTDataLogger is ReentrancyGuard {
 
 
     /**
-     * @notice Returns whether a heart rate reading crosses any threshold.
-     *         The backend can call this as a view before deciding to triggerAlert.
+     *Returns whether a heart rate reading crosses any threshold.
+     *The backend can call this as a view before deciding to triggerAlert.
      */
     function checkHeartRate(uint256 bpm)
         external
@@ -266,24 +266,24 @@ contract IoTDataLogger is ReentrancyGuard {
     }
 
     // View functions
-    /// @notice Returns all vitals log IDs for a patient
+    ///Returns all vitals log IDs for a patient
     function getLogsByPatient(address patient) external view returns (uint256[] memory) {
         return _patientLogs[patient];
     }
 
-    /// @notice Returns all alert IDs for a patient
+    ///Returns all alert IDs for a patient
     function getAlertsByPatient(address patient) external view returns (uint256[] memory) {
         return _patientAlerts[patient];
     }
 
-    /// @notice Returns the latest log for a patient (most recent vitals)
+    ///Returns the latest log for a patient (most recent vitals)
     function getLatestLog(address patient) external view returns (VitalsLog memory) {
         uint256[] memory ids = _patientLogs[patient];
         require(ids.length > 0, "No vitals logged for this patient");
         return vitalsLogs[ids[ids.length - 1]];
     }
 
-    /// @notice Returns threshold constants as a struct for frontend display
+    ///Returns threshold constants as a struct for frontend display
     function getThresholds() external pure returns (
         uint256 hrHigh, uint256 hrLow, uint256 spo2Low,
         uint256 bpSysHigh, uint256 glucoseHigh, uint256 glucoseLow
