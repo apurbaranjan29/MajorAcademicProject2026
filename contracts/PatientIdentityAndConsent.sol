@@ -2,9 +2,9 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title  PatientIdentityAndConsent
- * @notice Registers patients, manages metadata hashes (IPFS), and controls
- *         time-limited consent granted to doctors / hospitals / insurers.
+ * PatientIdentityAndConsent
+ * Registers patients, manages metadata hashes (IPFS), and controls
+ * time-limited consent granted to doctors/hospitals/insurers.
  */
 
 // Minimal inline ReentrancyGuard (no external dependency needed) 
@@ -21,8 +21,6 @@ abstract contract ReentrancyGuard {
 
 contract PatientIdentityAndConsent is ReentrancyGuard {
     // Types
-
-    /// @dev Replaces the old `mapping(address=>mapping(address=>bool))`
     /// Consent is only valid when granted == true AND block.timestamp < expiresAt
 
     struct ConsentRecord {
@@ -69,10 +67,10 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
 
     // Admin functions
     /**
-     * @notice Register a new patient.  Only the registry admin calls this
-     *         (e.g., hospital onboarding desk).
-     * @param  patientAddress  Wallet address of the patient
-     * @param  metadataHash    IPFS CID of encrypted patient profile JSON
+     * Register a new patient.  Only the registry admin calls this
+     * (e.g., hospital onboarding desk).
+     * patientAddress  Wallet address of the patient
+     * metadataHash    IPFS CID of encrypted patient profile JSON
      */
     function registerPatient(address patientAddress, string memory metadataHash)
         external
@@ -93,8 +91,8 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
 
     // Patient functions
     /**
-     * @notice Patient updates their own metadata IPFS hash.
-     * @param  newMetadataHash  New IPFS CID
+     *Patient updates their own metadata IPFS hash.
+     *newMetadataHash  New IPFS CID
      */
     function updateMetadata(string memory newMetadataHash)
         external
@@ -107,10 +105,10 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
     }
 
     /**
-     * @notice Grant consent to a delegate (doctor / hospital / insurer) with
-     *         a custom duration in days.  Pass 0 to use the default 365 days.
-     * @param  delegate       Address to receive consent
-     * @param  durationDays   How many days the consent is valid (0 = default)
+     *Grant consent to a delegate (doctor / hospital / insurer) with
+     *a custom duration in days.  Pass 0 to use the default 365 days.
+     *delegate=Address to receive consent
+     *durationDays=How many days the consent is valid (0 = default)
      */
     function grantConsent(address delegate, uint256 durationDays)
         external
@@ -128,8 +126,8 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
     }
 
     /**
-     * @notice Revoke consent from a delegate immediately.
-     * @param  delegate  Address whose consent is revoked
+     * Revoke consent from a delegate immediately.
+     * delegate  Address whose consent is revoked
      */
     function revokeConsent(address delegate)
         external
@@ -147,10 +145,10 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
     // View functions  (called by all other contracts)
 
     /**
-     * @notice Primary cross-contract consent check.
-     *         Returns true only if consent is granted AND not expired.
-     * @param  patient   Patient's address
-     * @param  delegate  Address requesting access (doctor, insurer, etc.)
+     * Primary cross-contract consent check.
+     * Returns true only if consent is granted AND not expired.
+     * patient=Patient's address
+     * delegate=Address requesting access (doctor, insurer, etc.)
      */
     function hasValidConsent(address patient, address delegate)
         external
@@ -162,8 +160,8 @@ contract PatientIdentityAndConsent is ReentrancyGuard {
     }
 
     /**
-     * @notice Returns the full consent details for a patient-delegate pair.
-     *         Used by the frontend to show expiry date in the dashboard.
+     *Returns the full consent details for a patient-delegate pair.
+     *Used by the frontend to show expiry date in the dashboard.
      */
     function getConsentDetails(address patient, address delegate)
         external
