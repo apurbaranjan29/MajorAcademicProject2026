@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Layout from '../../components/MainLayout'
 import {
     Activity, Wifi, WifiOff, HeartPulse, Wind,
-    Droplets, Save, Database, X, ShieldAlert, Check
+    Droplets, Save, Database, X, ShieldAlert, AlertTriangle
 } from 'lucide-react'
 import { useWeb3 } from '../../context/Web3Context'
 import { getContract } from '../../lib/contracts'
@@ -21,6 +21,7 @@ export default function IoTDataLogger() {
     const [sessionLogs, setSessionLogs] = useState([])
 
     const [copyStatus, setCopyStatus] = useState(null)
+    const [liveAlert, setLiveAlert] = useState(null) // New State for Panel Alerts
 
     const [vitals, setVitals] = useState({ hr: '--', spo2: '--', sys: '--', dia: '--' })
     const streamInterval = useRef(null)
@@ -64,21 +65,46 @@ export default function IoTDataLogger() {
         if (isStreaming) {
             clearInterval(streamInterval.current)
             setIsStreaming(false)
+            setLiveAlert(null)
         } else {
             setSessionLogs([])
             setIsStreaming(true)
 
             streamInterval.current = setInterval(() => {
-                const currentHr = Math.floor(Math.random() * (95 - 65 + 1)) + 65
-                const currentSpo2 = Math.floor(Math.random() * (100 - 95 + 1)) + 95
-                const currentSys = Math.floor(Math.random() * (125 - 110 + 1)) + 110
-                const currentDia = Math.floor(Math.random() * (80 - 70 + 1)) + 70
+                const isSpike = Math.random() > 0.75;
+
+                const currentHr = isSpike
+                    ? Math.floor(Math.random() * (140 - 110 + 1)) + 110
+                    : Math.floor(Math.random() * (95 - 65 + 1)) + 65;
+
+                const currentSpo2 = isSpike
+                    ? Math.floor(Math.random() * (89 - 82 + 1)) + 82
+                    : Math.floor(Math.random() * (100 - 95 + 1)) + 95;
+
+                const currentSys = isSpike
+                    ? Math.floor(Math.random() * (160 - 140 + 1)) + 140
+                    : Math.floor(Math.random() * (125 - 110 + 1)) + 110;
+
+                const currentDia = isSpike
+                    ? Math.floor(Math.random() * (100 - 90 + 1)) + 90
+                    : Math.floor(Math.random() * (80 - 70 + 1)) + 70;
 
                 const reading = {
                     timestamp: new Date().toLocaleTimeString(),
                     hr: currentHr,
                     spo2: currentSpo2,
-                    bp: `${currentSys}/${currentDia}`
+                    bp: `${currentSys}/${currentDia}`,
+                    isCritical: isSpike
+                }
+
+                if (isSpike) {
+                    let alertMsg = "";
+                    if (currentHr > 105) alertMsg = `CRITICAL: Tachycardia Detected (${currentHr} BPM)`;
+                    else if (currentSpo2 < 90) alertMsg = `CRITICAL: Hypoxia Detected (SpO2 ${currentSpo2}%)`;
+                    else alertMsg = `CRITICAL: Hypertension Spike (${currentSys}/${currentDia})`;
+
+                    setLiveAlert(alertMsg);
+                    setTimeout(() => setLiveAlert(null), 1800);
                 }
 
                 setVitals({ hr: currentHr, spo2: currentSpo2, sys: currentSys, dia: currentDia })
@@ -137,7 +163,13 @@ export default function IoTDataLogger() {
         <Layout title="IoT Data Logger" subtitle="Live edge-computing vitals batched securely to the blockchain">
             <div className="max-w-[1000px] mx-auto pb-20 page-transition space-y-8 relative">
 
-                {/* HERO SECTION */}
+                {liveAlert && (
+                    <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-[#ff3b30]/10 backdrop-blur-xl border border-[#ff3b30] text-[#ff3b30] px-6 py-3 rounded-full shadow-[0_0_40px_rgba(255,59,48,0.3)] animate-in fade-in slide-in-from-top-5 duration-200">
+                        <AlertTriangle size={20} className="animate-pulse" />
+                        <span className="text-sm font-bold tracking-wide uppercase">{liveAlert}</span>
+                    </div>
+                )}
+
                 <div className="text-center py-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <h1 className="text-4xl heading-display mb-3">Edge Telemetry</h1>
                     <p className="text-[14px] text-[#86868b] max-w-lg mx-auto">
@@ -145,7 +177,6 @@ export default function IoTDataLogger() {
                     </p>
                 </div>
 
-                {/* CONTROL PANEL */}
                 <div className="apple-card p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl animate-in slide-in-from-bottom-8 duration-700">
                     <div className="flex items-center gap-5 w-full md:w-auto">
                         <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-all duration-500 ${isStreaming ? 'bg-[#00ff41]/20 text-[#00ff41] shadow-[0_0_20px_rgba(0,255,65,0.2)]' : 'bg-black border border-[#424245] text-[#86868b]'}`}>
@@ -178,42 +209,39 @@ export default function IoTDataLogger() {
                         onClick={toggleStream}
                         disabled={isLoadingPatients || patients.length === 0}
                         className={`w-full md:w-auto px-8 py-3.5 rounded-full text-[14px] font-bold transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 ${isStreaming
-                                ? 'bg-transparent border border-[#ff3b30] text-[#ff3b30] hover:bg-[#ff3b30]/10 active:scale-95'
-                                : 'bg-[#0071e3] hover:bg-[#0066cc] text-white border border-transparent active:scale-95 shadow-[0_4px_20px_rgba(0,113,227,0.3)]'
+                            ? 'bg-transparent border border-[#ff3b30] text-[#ff3b30] hover:bg-[#ff3b30]/10 active:scale-95'
+                            : 'bg-[#0071e3] hover:bg-[#0066cc] text-white border border-transparent active:scale-95 shadow-[0_4px_20px_rgba(0,113,227,0.3)]'
                             }`}
                     >
                         {isStreaming ? 'Terminate Stream' : 'Initialize IoT Stream'}
                     </button>
                 </div>
 
-                {/* LIVE METRICS DASHBOARD */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in zoom-in-95 duration-700">
-                    {/* Heart Rate */}
-                    <div className={`apple-card p-8 flex flex-col items-center justify-center text-center relative overflow-hidden transition-all duration-500 ${isStreaming ? 'border-[#ff3b30]/30 shadow-[0_0_30px_rgba(255,59,48,0.05)]' : ''}`}>
+
+                    <div className={`apple-card p-8 flex flex-col items-center justify-center text-center relative overflow-hidden transition-all duration-500 ${isStreaming ? 'border-[#ff3b30]/30 shadow-[0_0_30px_rgba(255,59,48,0.05)]' : ''} ${vitals.hr > 100 ? 'bg-[#ff3b30]/10 border-[#ff3b30]' : ''}`}>
                         {isStreaming && <div className="absolute top-0 left-0 w-full h-1 bg-[#ff3b30] animate-pulse"></div>}
                         <HeartPulse size={36} className={`mb-4 transition-colors ${isStreaming ? 'text-[#ff3b30]' : 'text-[#424245]'}`} />
                         <div className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest mb-1">Heart Rate</div>
-                        <div className="text-4xl heading-display text-[#f5f5f7] tracking-tight">{vitals.hr} <span className="text-sm font-medium text-[#86868b]">BPM</span></div>
+                        <div className={`text-4xl heading-display tracking-tight ${vitals.hr > 100 ? 'text-[#ff3b30]' : 'text-[#f5f5f7]'}`}>{vitals.hr} <span className="text-sm font-medium text-[#86868b]">BPM</span></div>
                     </div>
 
-                    {/* SPO2 */}
-                    <div className={`apple-card p-8 flex flex-col items-center justify-center text-center relative overflow-hidden transition-all duration-500 ${isStreaming ? 'border-[#0071e3]/30 shadow-[0_0_30px_rgba(0,113,227,0.05)]' : ''}`}>
+                    <div className={`apple-card p-8 flex flex-col items-center justify-center text-center relative overflow-hidden transition-all duration-500 ${isStreaming ? 'border-[#0071e3]/30 shadow-[0_0_30px_rgba(0,113,227,0.05)]' : ''} ${vitals.spo2 < 90 ? 'bg-[#0071e3]/10 border-[#0071e3]' : ''}`}>
                         {isStreaming && <div className="absolute top-0 left-0 w-full h-1 bg-[#0071e3] animate-pulse"></div>}
                         <Wind size={36} className={`mb-4 transition-colors ${isStreaming ? 'text-[#0071e3]' : 'text-[#424245]'}`} />
                         <div className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest mb-1">Blood Oxygen</div>
-                        <div className="text-4xl heading-display text-[#f5f5f7] tracking-tight">{vitals.spo2} <span className="text-sm font-medium text-[#86868b]">%</span></div>
+                        <div className={`text-4xl heading-display tracking-tight ${vitals.spo2 < 90 ? 'text-[#0071e3]' : 'text-[#f5f5f7]'}`}>{vitals.spo2} <span className="text-sm font-medium text-[#86868b]">%</span></div>
                     </div>
 
-                    {/* Blood Pressure */}
-                    <div className={`apple-card p-8 flex flex-col items-center justify-center text-center relative overflow-hidden transition-all duration-500 ${isStreaming ? 'border-[#bf5af2]/30 shadow-[0_0_30px_rgba(191,90,242,0.05)]' : ''}`}>
+
+                    <div className={`apple-card p-8 flex flex-col items-center justify-center text-center relative overflow-hidden transition-all duration-500 ${isStreaming ? 'border-[#bf5af2]/30 shadow-[0_0_30px_rgba(191,90,242,0.05)]' : ''} ${vitals.sys > 140 ? 'bg-[#bf5af2]/10 border-[#bf5af2]' : ''}`}>
                         {isStreaming && <div className="absolute top-0 left-0 w-full h-1 bg-[#bf5af2] animate-pulse"></div>}
                         <Droplets size={36} className={`mb-4 transition-colors ${isStreaming ? 'text-[#bf5af2]' : 'text-[#424245]'}`} />
                         <div className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest mb-1">Blood Pressure</div>
-                        <div className="text-4xl heading-display text-[#f5f5f7] tracking-tight">{vitals.sys === '--' ? '--' : `${vitals.sys}/${vitals.dia}`} <span className="text-sm font-medium text-[#86868b]">mmHg</span></div>
+                        <div className={`text-4xl heading-display tracking-tight ${vitals.sys > 140 ? 'text-[#bf5af2]' : 'text-[#f5f5f7]'}`}>{vitals.sys === '--' ? '--' : `${vitals.sys}/${vitals.dia}`} <span className="text-sm font-medium text-[#86868b]">mmHg</span></div>
                     </div>
                 </div>
 
-                {/* SESSION TERMINAL */}
                 <div className="apple-card overflow-hidden flex flex-col shadow-2xl">
                     <div className="p-5 border-b border-[#424245] flex justify-between items-center bg-[#1d1d1f]/80">
                         <div className="flex items-center gap-3">
@@ -238,30 +266,27 @@ export default function IoTDataLogger() {
                         </div>
                     </div>
 
-                    <div className="p-6 h-[280px] overflow-y-auto bg-black font-mono text-[12px] text-[#f5f5f7] shadow-inner">
+                    <div className="p-6 h-[280px] overflow-y-auto bg-black font-mono text-[12px] text-[#f5f5f7] shadow-inner flex flex-col-reverse">
                         {sessionLogs.length === 0 ? (
-                            <div className="flex flex-col h-full items-center justify-center opacity-40">
+                            <div className="flex flex-col h-full items-center justify-center opacity-40 pb-20">
                                 <Activity size={32} className="mb-3" />
                                 <p>Awaiting telemetry sequence...</p>
                             </div>
                         ) : (
-                            <div className="space-y-1.5">
+                            <div className="space-y-1.5 pb-2">
                                 {sessionLogs.map((log, i) => (
-                                    <div key={i} className="flex gap-6 p-1.5 hover:bg-[#1d1d1f] rounded transition-colors">
+                                    <div key={i} className={`flex gap-6 p-1.5 rounded transition-colors ${log.isCritical ? 'bg-[#ff3b30]/20 text-[#ff3b30]' : 'hover:bg-[#1d1d1f]'}`}>
                                         <span className="text-[#86868b] w-24">[{log.timestamp}]</span>
-                                        <span className="text-[#ff3b30] w-20">HR: {log.hr}</span>
-                                        <span className="text-[#0071e3] w-24">SPO2: {log.spo2}%</span>
-                                        <span className="text-[#bf5af2]">BP: {log.bp}</span>
+                                        <span className="w-20">HR: {log.hr}</span>
+                                        <span className="w-24">SPO2: {log.spo2}%</span>
+                                        <span>BP: {log.bp}</span>
+                                        {log.isCritical && <span className="ml-auto font-bold uppercase text-[10px] tracking-widest">CRITICAL SPIKE</span>}
                                     </div>
                                 ))}
-                                {/* Dummy element to ensure scrolling reaches the bottom natively */}
-                                <div className="h-2"></div>
                             </div>
                         )}
                     </div>
                 </div>
-
-                {/* APPLE STYLE FLOATING TOAST */}
                 {copyStatus && (
                     <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-[#1d1d1f]/90 backdrop-blur-md border border-[#424245] text-[#f5f5f7] px-6 py-3.5 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all animate-in slide-in-from-bottom-5 fade-in duration-300">
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center ${copyStatus === 'success' ? 'bg-[#00ff41]/20 text-[#00ff41]' : 'bg-[#ff3b30]/20 text-[#ff3b30]'}`}>

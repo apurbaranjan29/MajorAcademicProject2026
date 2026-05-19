@@ -124,7 +124,6 @@ export default function UploadPage() {
         <Layout title="Clinical Data Upload" subtitle="Anchor encrypted medical data to IPFS & Sepolia">
             <div className="max-w-[800px] mx-auto pb-20 page-transition">
 
-                {/* HERO SECTION */}
                 <div className="text-center py-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <h1 className="text-4xl heading-display mb-3">Secure Clinical Entry</h1>
                     <p className="text-[14px] text-[#86868b] max-w-lg mx-auto">
@@ -148,7 +147,7 @@ export default function UploadPage() {
 
                     <form onSubmit={handleUpload} className="p-8 md:p-10 space-y-8">
 
-                        {/* WALLET INPUT */}
+
                         <div>
                             <label className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest block mb-2 flex items-center gap-2">
                                 <Fingerprint size={12} /> Patient Identity (Wallet)
@@ -163,7 +162,7 @@ export default function UploadPage() {
                             />
                         </div>
 
-                        {/* DIAGNOSIS INPUT */}
+
                         <div>
                             <label className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest block mb-2 flex items-center gap-2">
                                 <Stethoscope size={12} /> Primary Diagnosis
@@ -178,7 +177,7 @@ export default function UploadPage() {
                             />
                         </div>
 
-                        {/* MEDICATION INPUT */}
+
                         <div>
                             <label className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest block mb-2 flex items-center gap-2">
                                 <FileText size={12} /> Medication (Rx)
@@ -193,7 +192,7 @@ export default function UploadPage() {
                             />
                         </div>
 
-                        {/* CLINICAL NOTES */}
+
                         <div>
                             <label className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest block mb-2">Clinical Notes & Observations</label>
                             <textarea
@@ -204,7 +203,7 @@ export default function UploadPage() {
                             ></textarea>
                         </div>
 
-                        {/* DYNAMIC STATUS FEEDBACK */}
+
                         <div className="pt-2">
                             {status.error && (
                                 <div className="p-4 bg-[#ff3b30]/10 border border-[#ff3b30]/30 rounded-xl flex items-start gap-3 animate-in shake">
@@ -234,7 +233,7 @@ export default function UploadPage() {
                             )}
                         </div>
 
-                        {/* SUBMIT ACTION */}
+
                         <button
                             type="submit"
                             disabled={status.loading}
@@ -248,4 +247,4 @@ export default function UploadPage() {
             </div>
         </Layout>
     )
-}
+}   

@@ -7,7 +7,7 @@ import { Users, FileText, ShieldCheck, Activity, RefreshCw, ExternalLink } from 
 import { useWeb3 } from '../context/Web3Context'
 import { getContract, getReadProvider, CONTRACT_ADDRESSES } from '../lib/contracts'
 
-// Lowered to 5000 for ultra-fast, lightweight table scanning without RPC timeouts
+
 const LOOKBACK_BLOCKS = 5000
 const NETWORK_NAME = 'Sepolia Testnet'
 
@@ -52,6 +52,9 @@ function getEventCategory(contractKey, eventName = '') {
             return 'record'
         }
     }
+    if (contractKey === 'InsuranceClaims') {
+        if (name.includes('claim') || name.includes('paid') || name.includes('fraud')) return 'insurance'
+    }
     return 'other'
 }
 
@@ -68,6 +71,8 @@ function buildTrackedContracts() {
         normalizeAddress(CONTRACT_ADDRESSES.Records) ||
         ''
 
+    const insuranceAddress = CONTRACT_ADDRESSES.InsuranceClaims ? normalizeAddress(CONTRACT_ADDRESSES.InsuranceClaims) : ''
+
     return [
         {
             key: 'PatientIdentity',
@@ -79,6 +84,11 @@ function buildTrackedContracts() {
             label: 'MedicalRecordsAndAccess',
             address: medicalRecordsAddress,
         },
+        {
+            key: 'InsuranceClaims',
+            label: 'InsuranceClaims',
+            address: insuranceAddress,
+        }
     ].filter(item => item.address)
 }
 
@@ -115,12 +125,11 @@ export default function DashboardPage() {
     const [liveStats, setLiveStats] = useState({ block: '--', gas: '--', chainId: '--' })
     const [isRefreshing, setIsRefreshing] = useState(false)
 
-    // O(1) Lifetime Stats for the Big Cards
     const [lifetimeStats, setLifetimeStats] = useState({
         registrations: '--',
         records: '--',
         consents: '--',
-        calls: '--'
+        claims: '--'
     })
 
     const [recentTxs, setRecentTxs] = useState([])
@@ -155,31 +164,32 @@ export default function DashboardPage() {
             setIsLoadingTxs(true)
             const readProvider = getReadProvider()
 
-            // ==========================================
-            // 1. INSTANT LIFETIME STATE FETCHING (O(1))
-            // ==========================================
+
             const identityContract = getContract('PatientIdentity', provider)
             const recordsContract = getContract('MedicalRecords', provider)
+            const insuranceContract = getContract('InsuranceClaims', provider)
 
             if (identityContract && recordsContract) {
                 try {
                     const totalPatients = await identityContract.getTotalPatients()
                     const totalRecords = await recordsContract.getTotalRecords()
+                    let totalClaims = 0
+
+                    if (insuranceContract) {
+                        try { totalClaims = await insuranceContract.claimCount() } catch (e) { }
+                    }
 
                     setLifetimeStats({
                         registrations: Number(totalPatients),
                         records: Number(totalRecords),
-                        consents: Number(totalPatients), // Derived scale for aesthetic tracking
-                        calls: Number(totalPatients) + Number(totalRecords)
+                        consents: Number(totalPatients),
+                        claims: Number(totalClaims)
                     })
                 } catch (err) {
                     console.warn("Could not fetch lifetime getters. Did you update the ABI?", err)
                 }
             }
 
-            // ==========================================
-            // 2. LIGHTWEIGHT EVENT SCAN FOR THE TABLE
-            // ==========================================
             const trackedContracts = buildTrackedContracts()
             if (trackedContracts.length === 0) {
                 setRecentTxs([])
@@ -270,10 +280,7 @@ export default function DashboardPage() {
         <Layout title="Network Dashboard" subtitle="Live protocol and transaction analytics">
             <div className="dashboard-bg max-w-[1200px] mx-auto pb-20 page-transition space-y-10">
 
-                {/* --- TOPOGRAPHIC TELEMETRY CLUSTER --- */}
                 <div className="relative rounded-[24px] overflow-hidden border border-[#424245] shadow-2xl animate-in slide-in-from-bottom-6 duration-700 bg-[#0a0a0c]">
-
-                    {/* The Background Image Layer */}
                     <div
                         className="absolute inset-0 z-0 opacity-25 pointer-events-none mix-blend-screen"
                         style={{
@@ -283,12 +290,10 @@ export default function DashboardPage() {
                             backgroundAttachment: 'fixed'
                         }}
                     />
-                    {/* Subtle Gradient to ensure text pops */}
                     <div className="absolute inset-0 z-0 bg-gradient-to-br from-black/80 via-black/40 to-transparent pointer-events-none" />
 
                     <div className="relative z-10 p-6 md:p-8 space-y-6">
 
-                        {/* Status Bar */}
                         <div className="bg-[#1d1d1f]/60 backdrop-blur-xl border border-[#424245] rounded-xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-lg">
                             <div className="flex flex-wrap items-center gap-6 font-mono text-[12px]">
                                 <span className="text-[#86868b]">
@@ -310,6 +315,14 @@ export default function DashboardPage() {
                                 <span className="text-[11px] text-[#86868b] hidden sm:block font-medium tracking-wide">
                                     {provider ? 'Synced just now' : 'Connect Wallet to Sync'}
                                 </span>
+                                <a
+                                    href="/insurance"
+                                    className="flex items-center gap-2 px-4 py-2 bg-[#bf5af2]/20 hover:bg-[#bf5af2]/30 border border-[#bf5af2]/50 text-[#bf5af2] rounded-lg text-[12px] font-semibold transition-all active:scale-95"
+                                >
+                                    <ShieldCheck size={14} />
+                                    Insurance Terminal
+                                </a>
+
                                 <button
                                     onClick={() => {
                                         fetchLiveStats()
@@ -324,9 +337,8 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
-                        {/* The 4 Analytics Cards */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {/* Card 1 */}
+
                             <div className="bg-[#1d1d1f]/60 backdrop-blur-xl border border-[#424245] rounded-[18px] p-6 flex flex-col justify-between hover:border-[#0071e3]/50 transition-colors shadow-lg">
                                 <div className="flex justify-between items-start mb-6">
                                     <h3 className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest">Registrations</h3>
@@ -341,7 +353,6 @@ export default function DashboardPage() {
                                 <p className="text-[9px] font-mono text-[#86868b] border-t border-[#424245]/50 pt-4 mt-6 truncate">Via PatientIdentityAndConsent.sol</p>
                             </div>
 
-                            {/* Card 2 */}
                             <div className="bg-[#1d1d1f]/60 backdrop-blur-xl border border-[#424245] rounded-[18px] p-6 flex flex-col justify-between hover:border-[#0071e3]/50 transition-colors shadow-lg">
                                 <div className="flex justify-between items-start mb-6">
                                     <h3 className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest">Records Anchored</h3>
@@ -371,25 +382,23 @@ export default function DashboardPage() {
                                 <p className="text-[9px] font-mono text-[#86868b] border-t border-[#424245]/50 pt-4 mt-6 truncate">Via PatientIdentityAndConsent.sol</p>
                             </div>
 
-                            {/* Card 4 */}
-                            <div className="bg-[#1d1d1f]/60 backdrop-blur-xl border border-[#424245] rounded-[18px] p-6 flex flex-col justify-between hover:border-[#0071e3]/50 transition-colors shadow-lg">
+                            <div className="bg-[#1d1d1f]/60 backdrop-blur-xl border border-[#424245] rounded-[18px] p-6 flex flex-col justify-between hover:border-[#bf5af2]/50 transition-colors shadow-lg">
                                 <div className="flex justify-between items-start mb-6">
-                                    <h3 className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest">Total Contract Calls</h3>
-                                    <Activity size={16} className="text-[#0071e3]" />
+                                    <h3 className="text-[10px] font-bold text-[#86868b] uppercase tracking-widest">Claims Processed</h3>
+                                    <Activity size={16} className="text-[#bf5af2]" />
                                 </div>
                                 <div>
                                     <div className="text-5xl heading-display text-[#f5f5f7] tracking-tight">
-                                        {lifetimeStats.calls}
+                                        {lifetimeStats.claims}
                                     </div>
-                                    <p className="text-[11px] text-[#0071e3] font-semibold mt-2">Verified on Sepolia</p>
+                                    <p className="text-[11px] text-[#bf5af2] font-semibold mt-2">Live from Chain</p>
                                 </div>
-                                <p className="text-[9px] font-mono text-[#86868b] border-t border-[#424245]/50 pt-4 mt-6 truncate">Direct RPC event scan</p>
+                                <p className="text-[9px] font-mono text-[#86868b] border-t border-[#424245]/50 pt-4 mt-6 truncate">Via InsuranceClaims.sol</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* --- REAL-TIME TRANSACTIONS TABLE --- */}
                 <div className="apple-card overflow-hidden animate-in slide-in-from-bottom-8 duration-700 delay-100">
                     <div className="px-6 py-5 border-b border-[#424245] flex items-center justify-between bg-[#1d1d1f]/80">
                         <h2 className="font-bold text-[#f5f5f7] text-[14px] tracking-tight">Real-Time Transactions</h2>

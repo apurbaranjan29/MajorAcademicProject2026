@@ -12,6 +12,7 @@ import {
     Activity,
     Stethoscope,
     PackageCheck,
+    ClipboardList, // Added new icon for Insurance
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -31,6 +32,7 @@ const NAV_ITEMS = [
             { href: '/provider', label: 'Provider Portal', icon: Stethoscope },
             { href: '/verify', label: 'Drug Authenticity', icon: PackageCheck },
             { href: '/tamper', label: 'Tamper Detection', icon: FileSearch },
+            { href: '/insurance', label: 'Insurance Claims', icon: ClipboardList }, // Added Insurance Link
         ],
     },
     {
@@ -54,7 +56,7 @@ export default function Sidebar() {
                 transition-all duration-300
             "
         >
-            {/* Apple-Style Brand Block */}
+
             <div className="flex items-center gap-3 px-6 py-8">
                 <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]">
                     <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
@@ -73,7 +75,7 @@ export default function Sidebar() {
                 </div>
             </div>
 
-            {/* Navigation Gear */}
+
             <nav className="flex-1 overflow-y-auto px-4 py-2 space-y-8">
                 {NAV_ITEMS.map((group) => (
                     <div key={group.section}>
@@ -111,7 +113,6 @@ export default function Sidebar() {
                 ))}
             </nav>
 
-            {/* Network Forensic Status */}
             <div className="mx-4 my-6 p-4 rounded-2xl bg-[#1d1d1f] border border-[#272729]">
                 <div className="flex items-center gap-2.5">
                     <div className="relative">
