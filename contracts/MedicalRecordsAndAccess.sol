@@ -2,9 +2,9 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title  MedicalRecordsAndAccess
- * @notice Stores encrypted medical record IPFS hashes on-chain and enforces
- *         patient-controlled, time-limited consent before allowing access.
+ * MedicalRecordsAndAccess
+ * Stores encrypted medical record IPFS hashes on-chain and enforces
+ * patient-controlled, time-limited consent before allowing access.
  */
 
 // Interface for PatientIdentityAndConsent
@@ -92,11 +92,11 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
 
     // Write functions
     /**
-     * @notice Add a medical record for a patient.
-     *         Caller must hold valid patient consent.
-     * @param  patient     Patient's address
-     * @param  ipfsHash    IPFS CID of the AES-256 encrypted record
-     * @param  recordType  Human-readable type string ("LAB_REPORT", "PRESCRIPTION", etc.)
+     * Add a medical record for a patient.
+     * Caller must hold valid patient consent.
+     * patient     Patient's address
+     * ipfsHash    IPFS CID of the AES-256 encrypted record
+     * recordType  Human-readable type string ("LAB_REPORT", "PRESCRIPTION", etc.)
      */
     function addMedicalRecord(
         address patient,
@@ -137,7 +137,7 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
     }
 
     /**
-     * @notice Allows the original doctor to correct a faulty record.
+     * Allows the original doctor to correct a faulty record.
      * The old hash is permanently logged in the event history for auditing.
      */
     function updateMedicalRecord(uint256 _recordId, string memory _newIpfsHash) external {
@@ -150,11 +150,11 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
 
     // Read functions
     /**
-     * @notice View a specific medical record and emit an access log.
-     *         Requires valid patient consent.
-     * @param  recordId     The global record ID
-     * @param  accessorRole Human-readable role label (passed by caller for the audit log)
-     * @return ipfsHash     IPFS CID of the encrypted record
+     * View a specific medical record and emit an access log.
+     * Requires valid patient consent.
+     * recordId=The global record ID
+     * accessorRole=Human-readable role label (passed by caller for the audit log)
+     * ipfsHash     IPFS CID of the encrypted record
      */
     function viewMedicalRecord(uint256 recordId, string memory accessorRole)
         external
@@ -173,9 +173,9 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
     }
 
     /**
-     * @notice Returns all record IDs belonging to a patient.
-     *         Frontend uses this to paginate a patient's record history.
-     * @param  patient  Patient's address
+     * Returns all record IDs belonging to a patient.
+     * Frontend uses this to paginate a patient's record history.
+     * patient  Patient's address
      */
     function getRecordsByPatient(address patient)
         external
@@ -186,14 +186,14 @@ contract MedicalRecordsAndAccess is ReentrancyGuard {
     }
 
     /**
-     * @notice Returns the total number of records for a patient.
+     * Returns the total number of records for a patient.
      */
     function getRecordCount(address patient) external view returns (uint256) {
         return _patientRecordIds[patient].length;
     }
     /**
-     * @notice Returns the latest version number of a patient's records.
-     *         Useful for checking if a patient's records have been updated.
+     *Returns the latest version number of a patient's records.
+     *Useful for checking if a patient's records have been updated.
      */
     function getLatestVersion(address patient) external view returns (uint256) {
         return patientRecordVersion[patient];
