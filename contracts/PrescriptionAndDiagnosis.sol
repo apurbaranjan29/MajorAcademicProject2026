@@ -2,10 +2,10 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title  PrescriptionAndDiagnosis
- * @notice Doctors write diagnoses and prescriptions on-chain (IPFS hash +
- *         metadata).  Prescriptions have an expiry and a lifecycle:
- *         ISSUED → DISPENSED | EXPIRED.
+ * PrescriptionAndDiagnosis
+ * Doctors write diagnoses and prescriptions on-chain (IPFS hash+
+ * metadata).Prescriptions have an expiry and a lifecycle:
+ * ISSUED -> DISPENSED | EXPIRED.
  */
 
 // Interfaces 
@@ -129,8 +129,8 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
 
     // Doctor functions
     /**
-     * @notice Add a diagnosis for a patient.
-     *         Caller must be a consented doctor.
+     *Add a diagnosis for a patient.
+     *Caller must be a consented doctor.
      */
 
     function addDiagnosis(
@@ -160,8 +160,8 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
     }
 
     /**
-     * @notice Add a prescription for a patient.
-     * @param  validityDays  0 = use default 180 days
+     *Add a prescription for a patient.
+     *validityDays  0 = use default 180 days
      */
     function addPrescription(
         address patient,
@@ -200,10 +200,10 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
     // Pharmacist functions
 
     /**
-     * @notice Mark a prescription as dispensed.
-     *         Only callable by a registered pharmacist.
-     *         Validates the prescription is still ISSUED and not expired.
-     *         DrugAuthenticity.sol calls isValidPrescription() before this.
+     *Mark a prescription as dispensed.
+     *Only callable by a registered pharmacist.
+     *Validates the prescription is still ISSUED and not expired.
+     *DrugAuthenticity.sol calls isValidPrescription() before this.
      */
     function dispensePrescription(uint256 prescriptionId)
         external
@@ -223,8 +223,8 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
     }
 
     /**
-     * @notice Mark a prescription as EXPIRED.
-     *         Anyone can call this on an overdue prescription (used by bots / cron).
+     *Mark a prescription as EXPIRED.
+     *Anyone can call this on an overdue prescription (used by bots / cron).
      */
     function expirePrescription(uint256 prescriptionId) external {
         Prescription storage p = prescriptions[prescriptionId];
@@ -238,8 +238,8 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
 
     // View functions
     /**
-     * @notice Primary cross-contract check used by DrugAuthenticity.
-     *         Returns true only if prescription is ISSUED and not expired.
+     *Primary cross-contract check used by DrugAuthenticity.
+     *Returns true only if prescription is ISSUED and not expired.
      */
     function isValidPrescription(uint256 prescriptionId)
         external
@@ -255,8 +255,8 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
     }
 
     /**
-     * @notice Returns full prescription struct — called by DrugAuthenticity
-     *         to get the patient address for validation.
+     *Returns full prescription struct — called by DrugAuthenticity
+     *to get the patient address for validation.
      */
     function getPrescription(uint256 prescriptionId)
         external
@@ -267,12 +267,12 @@ contract PrescriptionAndDiagnosis is ReentrancyGuard {
         return prescriptions[prescriptionId];
     }
 
-    /// @notice Returns all prescription IDs for a patient
+    ///Returns all prescription IDs for a patient
     function getPrescriptionsByPatient(address patient) external view returns (uint256[] memory) {
         return _patientPrescriptions[patient];
     }
 
-    /// @notice Returns all diagnosis IDs for a patient
+    ///Returns all diagnosis IDs for a patient
     function getDiagnosesByPatient(address patient) external view returns (uint256[] memory) {
         return _patientDiagnoses[patient];
     }
