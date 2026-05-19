@@ -2,10 +2,10 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title  HealthcareAccessControl
- * @notice Central Role-Based Access Control for the SC-BHIoT system.
- *         Deploy this CONTRACT FIRST and pass its address to every other
- *         contract's constructor.
+ * HealthcareAccessControl
+ * Central Role-Based Access Control for the SC-BHIoT system.
+ * Deploy this CONTRACT FIRST and pass its address to every other
+ * contract's constructor.
  */
 contract HealthcareAccessControl {
     // Role constants  (keccak256 of a human-readable label)
@@ -50,7 +50,7 @@ contract HealthcareAccessControl {
 
     
     // Admin functions
-    /// @notice Grant a role to an account (admin only)
+    /// Grant a role to an account (admin only)
 
     function grantRole(bytes32 role, address account) external onlyAdmin {
         require(account != address(0), "Invalid account address");
@@ -60,7 +60,7 @@ contract HealthcareAccessControl {
     }
 
 
-    /// @notice Revoke a role from an account (admin only)
+    /// Revoke a role from an account (admin only)
 
     function revokeRole(bytes32 role, address account) external onlyAdmin {
         require(_roles[role][account], "Role not currently assigned");
@@ -68,7 +68,7 @@ contract HealthcareAccessControl {
         emit RoleRevoked(role, account, msg.sender);
     }
 
-    /// @notice Transfer system admin to a new address
+    ///Transfer system admin to a new address
     function transferAdmin(address newAdmin) external onlyAdmin {
         require(newAdmin != address(0), "Invalid address");
         emit AdminTransferred(systemAdmin, newAdmin);
@@ -77,14 +77,14 @@ contract HealthcareAccessControl {
 
 
     // View functions
-    /// @notice Check if an account holds a specific role
+    ///Check if an account holds a specific role
 
     function hasRole(bytes32 role, address account) external view returns (bool) {
         return _roles[role][account];
     }
 
 
-    /// @notice Returns the role label for DOCTOR (helper for frontend)
+    ///Returns the role label for DOCTOR (helper for frontend)
 
     function getDoctorRole()      external pure returns (bytes32) { return DOCTOR_ROLE; }
     function getPharmacistRole()  external pure returns (bytes32) { return PHARMACIST_ROLE; }
