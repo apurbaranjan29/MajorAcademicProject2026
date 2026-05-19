@@ -2,9 +2,10 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title  InsuranceClaims
- * @notice Automates insurance claim lifecycle: Submitted → Approved → Paid
- *         or Submitted → Rejected.  Includes ETH-based demo payout.
+ * InsuranceClaims
+ * Automates insurance claim lifecycle: Submitted - Approved - Paid
+ * or Submitted - Rejected.  
+ * Includes ETH-based demo payout.
  */
 
 // Interfaces
@@ -113,11 +114,11 @@ contract InsuranceClaims is ReentrancyGuard {
     // Hospital / clinic functions
 
     /**
-     * @notice Submit a new insurance claim on behalf of a patient.
-     *         Fraud checks: cooldown period + rolling window limit.
-     * @param  patient        Patient's address
-     * @param  amount         Claim amount in wei (demo only)
-     * @param  diagnosisHash  IPFS CID of the supporting diagnosis document
+     * Submit a new insurance claim on behalf of a patient.
+     * Fraud checks:cooldown period + rolling window limit.
+     * patient=Patient's address
+     * amount=Claim amount in wei (demo only)
+     * diagnosisHash=IPFS CID of the supporting diagnosis document
      */
     function submitClaim(
         address patient,
@@ -184,7 +185,7 @@ contract InsuranceClaims is ReentrancyGuard {
 
     // Insurer functions
     /**
-     * @notice Approve a submitted claim (insurer only).
+     * Approve a submitted claim (insurer only).
      */
     function approveClaim(uint256 claimId) external onlyInsurer nonReentrant {
         Claim storage c = claims[claimId];
@@ -198,8 +199,8 @@ contract InsuranceClaims is ReentrancyGuard {
     }
 
     /**
-     * @notice Reject a submitted claim (insurer only).
-     * @param  reason  Human-readable rejection reason (stored in event log)
+     * Reject a submitted claim (insurer only).
+     * reason  Human-readable rejection reason (stored in event log)
      */
     function rejectClaim(uint256 claimId, string memory reason)
         external
@@ -217,12 +218,12 @@ contract InsuranceClaims is ReentrancyGuard {
     }
 
     /**
-     * @notice Pay out an approved claim to the patient.
+     * Pay out an approved claim to the patient.
      *
-     * SECURITY — Checks-Effects-Interactions pattern:
-     *   1. CHECK:  verify state is Approved and contract has sufficient balance
-     *   2. EFFECT: update state BEFORE transferring ETH
-     *   3. INTERACT: transfer ETH last
+     * SECURITY: Checks-Effects-Interactions pattern:
+     *   1)CHECK:verify state is Approved and contract has sufficient balance
+     *   2)EFFECT: update state BEFORE transferring ETH
+     *   3)INTERACT: transfer ETH last
      *   + nonReentrant guard as a second line of defence
      */
     function payClaim(uint256 claimId) external onlyInsurer nonReentrant {
@@ -247,7 +248,7 @@ contract InsuranceClaims is ReentrancyGuard {
     }
 
     /**
-     * @notice Withdraw remaining ETH from the contract (insurer only).
+     *Withdraw remaining ETH from the contract (insurer only).
      *         Used at end of demo to recover unused test ETH.
      */
     function withdraw() external onlyInsurer nonReentrant {
@@ -258,7 +259,7 @@ contract InsuranceClaims is ReentrancyGuard {
     }
 
     // View functions
-    /// @notice Returns contract ETH balance (useful for demo dashboard)
+    ///Returns contract ETH balance (useful for demo dashboard)
     function getContractBalance() external view returns (uint256) {
         return address(this).balance;
     }
